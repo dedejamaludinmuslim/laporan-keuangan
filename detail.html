@@ -100,22 +100,23 @@
 
     .btn-back {
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 6px 10px;
-      font-size: 0.78rem;
-      background: #ffffff;
-      color: var(--gray);
+      border: 1px solid transparent;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s, opacity 0.1s;
     }
-
+    
     .btn-back:hover {
-      background: var(--gray-soft);
       transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+      box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
     }
 
     .info-label {
