@@ -139,6 +139,10 @@
     .info-label {
       font-size: 0.78rem;
       color: var(--gray);
+      display: flex;
+      justify-content: space-between;
+      min-width: 220px;
+      gap: 8px;
     }
 
     .info-label strong {
@@ -237,6 +241,10 @@
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: #ffffff;
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .btn-save-edit:disabled {
@@ -370,7 +378,8 @@
 
       <div class="edit-actions">
         <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
-          Simpan revisi nominal
+          Simpan
+          <span>💾</span>
         </button>
         <div class="edit-hint" id="editHint">
           Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
@@ -378,8 +387,8 @@
       </div>
     </div>
 
-    <!-- KOTAK 2: CHART -->
-    <div class="card-block">
+    <!-- KOTAK 2: CHART (DISABLE JIKA TIPE = SISA) -->
+    <div class="card-block" id="chartCard">
       <div class="chart-section">
         <div class="chart-title" id="chartTitle">Diagram rincian</div>
         <div class="chart-subtitle" id="chartSubtitle"></div>
@@ -415,6 +424,7 @@
     const editHint       = document.getElementById("editHint");
 
     // chart elements
+    const chartCardEl     = document.getElementById("chartCard");
     const chartTitleEl    = document.getElementById("chartTitle");
     const chartSubtitleEl = document.getElementById("chartSubtitle");
     const chartBarListEl  = document.getElementById("chartBarList");
@@ -468,7 +478,7 @@
       const hasEdits = pendingEdits.size > 0;
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan revisi nominal" untuk mengupdate data.';
+        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan" untuk mengupdate data.';
       } else {
         editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
       }
@@ -544,6 +554,13 @@
     }
 
     function renderRincianChart(rows, tipe) {
+      // Tidak ada chart untuk tipe "sisa"
+      if (tipe === "sisa") {
+        chartCardEl.style.display = "none";
+        return;
+      }
+
+      chartCardEl.style.display = "block";
       chartBarListEl.innerHTML = "";
       chartEmptyEl.style.display = "none";
       chartSubtitleEl.textContent = "";
@@ -553,13 +570,9 @@
         return;
       }
 
-      // basis chart:
-      // - pemasukan → breakdown pemasukan
-      // - pengeluaran → breakdown pengeluaran
-      // - sisa → fokus pengeluaran (persen terhadap pengeluaran)
       let baseJenis = null;
       if (tipe === "pemasukan") baseJenis = "pemasukan";
-      else if (tipe === "pengeluaran" || tipe === "sisa") baseJenis = "pengeluaran";
+      else if (tipe === "pengeluaran") baseJenis = "pengeluaran";
 
       let filteredRows = rows;
       if (baseJenis) {
@@ -636,7 +649,7 @@
         pageTitleEl.textContent = "Filter tidak lengkap";
         emptyStateEl.textContent = "URL kurang lengkap. Pastikan membuka halaman ini lewat kotak rekap bulanan.";
         emptyStateEl.style.display = "block";
-        chartEmptyEl.style.display = "block";
+        chartCardEl.style.display = "none";
         return;
       }
 
@@ -646,7 +659,10 @@
       pageTitleEl.textContent    = tipeLabel(role, tipe);
       pageSubtitleEl.textContent = tipeSubtitle(tipe);
       tagRoleEl.textContent      = `Pelapor: ${role}`;
-      infoBulanEl.innerHTML      = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
+      infoBulanEl.innerHTML      = `
+        <span><strong>Bulan:</strong> ${monthLabel(bulanKey)}</span>
+        <span><strong>Kode:</strong> ${bulanKey}</span>
+      `;
 
       if (tipe === "sisa") {
         theadRow.innerHTML = `
@@ -682,7 +698,7 @@
         console.error('Gagal load detail:', error);
         emptyStateEl.textContent = "Gagal memuat data dari server.";
         emptyStateEl.style.display = "block";
-        chartEmptyEl.style.display = "block";
+        chartCardEl.style.display = (tipe === "sisa") ? "none" : "block";
         return;
       }
 
