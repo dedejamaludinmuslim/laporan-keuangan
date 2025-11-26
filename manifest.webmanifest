@@ -1,6 +1,6 @@
 {
   "name": "Laporan Keuangan Rumah Tangga",
-  "short_name": "Keuangan RT",
+  "short_name": "LKRT",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#1d4ed8",
