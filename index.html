@@ -81,6 +81,21 @@
       color: #f3f4f6;
       margin-top: 4px;
     }
+    .badge-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+    
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.15);
+      color: #f9fafb;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
 
     .tabs {
       display: flex;
@@ -90,11 +105,11 @@
       padding: 3px;
       border-radius: 999px;
     }
-
+    
     .tab {
       flex: 1;
       text-align: center;
-      padding: 7px 8px;
+      padding: 9px 12px;          /* ⬅ sama seperti tombol "Terapkan" */
       border-radius: 999px;
       border: none;
       background: transparent;
@@ -458,7 +473,10 @@
     <div class="app-header">
       <div class="title-group">
         <h1>Laporan Keuangan Rumah Tangga</h1>
-        <p>Monitoring pemasukan &amp; pengeluaran Abi–Umi dalam satu layar.</p>
+        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
+      </div>
+      <div class="badge-row">
+        <span class="badge">Abi &amp; Umi Finance</span>
       </div>
     </div>
 
