@@ -49,40 +49,42 @@
       }
     }
 
-    .header {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      justify-content: flex-end;
-      align-items: center;
-    }
-    
-    .badge-brand,
-    .badge-role {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    
-    .badge-brand {
-      background: var(--purple-soft);
-      color: var(--purple);
-    }
-    
-    .badge-role {
-      background: var(--blue-soft);
-      color: var(--blue);
-    }
-
+      .header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      
+      /* baris badge: brand kiri, pelapor kanan */
+      .badge-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      
+      .badge-brand,
+      .badge-role {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      
+      /* brand (Abi & Umi Finance) */
+      .badge-brand {
+        background: var(--purple-soft);
+        color: var(--purple);
+      }
+      
+      /* pelapor: Abi / Umi */
+      .badge-role {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
 
     .title-block {
       padding: 14px 12px;
