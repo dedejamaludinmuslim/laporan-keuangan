@@ -320,21 +320,6 @@
       box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
     }
 
-    .form-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-
-    .form-actions button {
-      flex: 1;
-      justify-content: center;
-      margin-top: 0;
-      padding: 7px 12px;
-      font-size: 0.8rem;
-    }
-
     .top-summarizer {
       display: flex;
       flex-direction: column;
@@ -370,7 +355,6 @@
       color: var(--gray);
     }
 
-    /* ROW BULAN & TOMBOL TERAPKAN */
     .month-row {
       display: flex;
       gap: 6px;
@@ -426,7 +410,6 @@
       margin-bottom: 2px;
     }
 
-    /* Sisa Abi & Sisa Umi: judul + isi di-center */
     .rekap-card.full h3,
     .rekap-card.full .rekap-value,
     .rekap-card.full .rekap-sub {
@@ -469,12 +452,6 @@
       text-align: center;
       transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
     }
-    #btnRefreshRekap {
-      width: 100%;
-      padding: 9px 12px;      /* sama dengan month-input */
-      font-size: 0.8rem;      /* sama juga */
-      text-align: center;     /* teks di tengah */
-    }
 
     .month-input:focus {
       border-color: var(--purple);
@@ -484,6 +461,9 @@
 
     #btnRefreshRekap {
       width: 100%;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      text-align: center;
     }
   </style>
 </head>
@@ -549,22 +529,12 @@
             </div>
           </div>
 
-          <div class="form-group full" style="margin-top: 6px;">
-            <label>Revisi laporan (opsional)</label>
-            <div class="form-actions">
-              <button type="button" class="btn-ghost btn-blue-solid" id="btnRevisiFile">
-                Pilih file revisi
-              </button>
-              <button type="submit" class="btn-primary btn-purple-solid">
-                Simpan laporan
-                <span>💾</span>
-              </button>
-            </div>
-            <small id="revisiFilename" class="hint">Belum ada file revisi dipilih.</small>
-            <input type="file" id="revisi" style="display:none" />
-            <small class="hint">
-              Template revisi dapat diambil dari file laporan bulanan di menu Rekap bulanan.
-            </small>
+          <!-- TOMBOL SIMPAN SAJA, DI TENGAH -->
+          <div class="form-group full" style="margin-top: 10px; text-align: center;">
+            <button type="submit" class="btn-primary btn-purple-solid">
+              Simpan laporan
+              <span>💾</span>
+            </button>
           </div>
 
           <div id="error-msg" class="error" style="display: none;"></div>
@@ -625,8 +595,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co'; // GANTI
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';                // GANTI
+    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     let transaksi = [];
@@ -663,8 +633,7 @@
 
     const tabs = document.querySelectorAll(".tab");
     const panels = document.querySelectorAll(".tab-panel");
-    
-    // Fungsi umum untuk ganti tab
+
     function switchTab(name) {
       tabs.forEach(t => {
         const isActive = t.dataset.tab === name;
@@ -674,14 +643,12 @@
         p.style.display = (p.id === `tab-${name}`) ? "block" : "none";
       });
     }
-    
-    // Klik tab manual
+
     tabs.forEach(tab => {
       tab.addEventListener("click", () => {
         const target = tab.dataset.tab;
         switchTab(target);
-    
-        // Update hash di URL (optional, biar konsisten)
+
         if (history.replaceState) {
           const url = new URL(window.location);
           url.hash = (target === "rekap") ? "#rekap" : "";
@@ -689,15 +656,13 @@
         }
       });
     });
-    
-    // Tentukan tab awal saat halaman dibuka
+
     (function initTabFromUrl() {
       const hash = window.location.hash;
       const initialTab = (hash === "#rekap") ? "rekap" : "input";
       switchTab(initialTab);
     })();
-    
-       
+
     const form = document.getElementById("form-laporan");
     const jenisEl = document.getElementById("jenis");
     const pelaporEl = document.getElementById("pelapor");
@@ -707,10 +672,6 @@
 
     const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
     const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
-
-    const revisiInput = document.getElementById("revisi");
-    const revisiBtn = document.getElementById("btnRevisiFile");
-    const revisiFilename = document.getElementById("revisiFilename");
 
     async function refreshRincianDatalist() {
       const jenis = jenisEl.value;
@@ -757,18 +718,6 @@
       });
     });
 
-    revisiBtn.addEventListener("click", () => {
-      revisiInput.click();
-    });
-
-    revisiInput.addEventListener("change", () => {
-      if (revisiInput.files && revisiInput.files[0]) {
-        revisiFilename.textContent = "File revisi: " + revisiInput.files[0].name;
-      } else {
-        revisiFilename.textContent = "Belum ada file revisi dipilih.";
-      }
-    });
-
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       errorMsg.style.display = "none";
@@ -785,16 +734,13 @@
         return;
       }
 
-      const revisiNamaFile = revisiInput.files[0]?.name || null;
-
       const newItem = {
         tanggal,
         bulan_key: getMonthKey(tanggal),
         pelapor,
         jenis,
         rincian,
-        jumlah,
-        revisi_nama_file: revisiNamaFile,
+        jumlah
       };
 
       const { error } = await supabase
@@ -816,8 +762,6 @@
       jenisEl.value = "";
       pelaporToggleBtns.forEach(b => b.classList.remove("active"));
       jenisToggleBtns.forEach(b => b.classList.remove("active"));
-      revisiInput.value = "";
-      revisiFilename.textContent = "Belum ada file revisi dipilih.";
 
       alert("Laporan keuangan berhasil disimpan.");
     });
@@ -922,7 +866,6 @@
         </div>
       `;
 
-      // aktifkan klik ke halaman detail
       const cards = document.querySelectorAll(".rekap-click");
       cards.forEach(card => {
         card.addEventListener("click", () => {
