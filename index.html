@@ -61,14 +61,17 @@
         margin-bottom: 16px;
       }
       
-      .title-group {
-        padding: 14px 12px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, var(--purple), var(--blue));
-        text-align: center;
-        color: #ffffff;
-        width: 100%;
-      }
+    .title-group h1 {
+      font-size: 1.15rem;   /* tadinya 1.2rem, samakan dengan .title di detail.html */
+      font-weight: 700;
+      color: #ffffff;
+    }
+    
+    .title-group p {
+      font-size: 0.85rem;   /* samakan dengan .subtitle di detail.html */
+      color: #f3f4f6;
+      margin-top: 4px;
+    }
       
     .tabs {
       display: flex;
@@ -518,7 +521,7 @@
           <!-- TOMBOL SIMPAN SAJA, DI TENGAH -->
             <div class="form-group full" style="margin-top: 10px; text-align: center;">
               <button type="submit" class="btn-primary btn-mixed">
-                Simpan laporan
+                Simpan
                 <span>💾</span>
               </button>
             </div>
