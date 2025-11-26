@@ -255,7 +255,40 @@
       margin-top: 6px;
     }
 
-    /* REKAP STYLING BARU */
+    /* TOGGLE BUTTON GROUP (ABI/UMI, PEMASUKAN/PENGELUARAN) */
+    .toggle-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #f9fafb;
+      color: var(--gray);
+      text-align: center;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .toggle-btn.active {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: var(--white);
+      border-color: transparent;
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .toggle-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    /* REKAP STYLING */
 
     .top-summarizer {
       display: flex;
@@ -307,12 +340,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-    }
-
-    @media (max-width: 420px) {
-      .rekap-grid-2 {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     .rekap-card {
@@ -387,22 +414,24 @@
               <input type="date" id="tanggal" required />
             </div>
 
+            <!-- PELAPOR: TOGGLE ABI / UMI -->
             <div class="form-group">
-              <label for="pelapor">Siapa yang laporan?</label>
-              <select id="pelapor" required>
-                <option value="">Pilih pelapor</option>
-                <option value="Abi">Abi</option>
-                <option value="Umi">Umi</option>
-              </select>
+              <label>Siapa yang laporan?</label>
+              <div class="toggle-group" id="pelaporToggle">
+                <button type="button" class="toggle-btn" data-value="Abi">Abi</button>
+                <button type="button" class="toggle-btn" data-value="Umi">Umi</button>
+              </div>
+              <input type="hidden" id="pelapor" />
             </div>
 
+            <!-- JENIS: TOGGLE PEMASUKAN / PENGELUARAN -->
             <div class="form-group">
-              <label for="jenis">Jenis laporan</label>
-              <select id="jenis" required>
-                <option value="">Pilih jenis</option>
-                <option value="pemasukan">Pemasukan</option>
-                <option value="pengeluaran">Pengeluaran</option>
-              </select>
+              <label>Jenis laporan</label>
+              <div class="toggle-group" id="jenisToggle">
+                <button type="button" class="toggle-btn" data-value="pemasukan">Pemasukan</button>
+                <button type="button" class="toggle-btn" data-value="pengeluaran">Pengeluaran</button>
+              </div>
+              <input type="hidden" id="jenis" />
               <small class="hint">Tipe laporan mempengaruhi rekomendasi rincian.</small>
             </div>
 
@@ -539,10 +568,14 @@
 
     // INPUT FORM
     const form = document.getElementById("form-laporan");
-    const jenisEl = document.getElementById("jenis");
+    const jenisEl = document.getElementById("jenis");      // hidden
+    const pelaporEl = document.getElementById("pelapor");  // hidden
     const rincianEl = document.getElementById("rincian");
     const rincianListEl = document.getElementById("rincianList");
     const errorMsg = document.getElementById("error-msg");
+
+    const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
+    const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
 
     let transaksi = loadTransaksi();
 
@@ -565,15 +598,32 @@
       }
     }
 
-    jenisEl.addEventListener("change", refreshRincianDatalist);
+    // Klik toggle pelapor
+    pelaporToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        pelaporEl.value = value;
+        pelaporToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
+      });
+    });
+
+    // Klik toggle jenis
+    jenisToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        jenisEl.value = value;
+        jenisToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
+        refreshRincianDatalist();
+      });
+    });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       errorMsg.style.display = "none";
 
       const tanggal = document.getElementById("tanggal").value;
-      const pelapor = document.getElementById("pelapor").value;
-      const jenis = document.getElementById("jenis").value;
+      const pelapor = pelaporEl.value;
+      const jenis = jenisEl.value;
       const rincian = rincianEl.value.trim();
       const jumlah = Number(document.getElementById("jumlah").value || 0);
       const revisiInput = document.getElementById("revisi");
@@ -602,6 +652,10 @@
       saveTransaksi(transaksi);
       refreshRincianDatalist();
       form.reset();
+      pelaporEl.value = "";
+      jenisEl.value = "";
+      pelaporToggleBtns.forEach(b => b.classList.remove("active"));
+      jenisToggleBtns.forEach(b => b.classList.remove("active"));
       alert("Laporan keuangan berhasil disimpan.");
     });
 
