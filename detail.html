@@ -205,28 +205,20 @@
     /* Area tombol simpan revisi */
     .edit-actions {
       margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: center; /* tengah */
     }
-
+    
     .btn-save-edit {
+      display: block;              /* biar bisa lebar penuh */
+      width: 100%;                 /* full lebar container */
       border-radius: 999px;
       border: none;
-      padding: 9px 14px;              /* sama seperti btn-primary */
-      font-size: 0.85rem;             /* sama seperti btn-primary */
+      padding: 9px 14px;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      background: linear-gradient(135deg, var(--purple), var(--blue)); /* sama gradient */
+      background: linear-gradient(135deg, var(--purple), var(--blue));
       color: #ffffff;
-      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);                 /* sama shadow */
-      display: inline-flex;           /* sama: icon + teks */
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.1s, box-shadow 0.1s, opacity 0.1s;
-      margin-top: 4px;
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
     }
 
     .btn-save-edit:hover:enabled {
