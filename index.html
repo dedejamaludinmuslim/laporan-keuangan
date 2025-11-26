@@ -246,6 +246,7 @@
       color: var(--blue);
       display: inline-flex;
       align-items: center;
+      justify-content: center;   /* teks di tengah */
       gap: 6px;
       transition: background 0.1s, transform 0.1s, box-shadow 0.1s, border-color 0.1s, color 0.1s;
     }
@@ -336,6 +337,9 @@
     .form-actions button {
       flex: 1;
       justify-content: center;
+      margin-top: 0;          /* hilangkan margin top tambahan di baris ini */
+      padding: 7px 12px;      /* samakan tinggi & padding keduanya */
+      font-size: 0.8rem;
     }
 
     /* REKAP STYLING */
@@ -451,6 +455,11 @@
       border-color: var(--purple);
       box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
       background: #ffffff;
+    }
+
+    /* Tombol Terapkan nempel ke kanan */
+    #btnRefreshRekap {
+      margin-left: auto;
     }
   </style>
 </head>
@@ -951,6 +960,8 @@
       URL.revokeObjectURL(url);
     }
 
+    const downloadButtons = document.querySelectorAll("button[data-download]");
+
     downloadButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         const tipe = btn.dataset.download;
@@ -960,7 +971,7 @@
       });
     });
 
-    // INIT: load transaksi (untuk rekomendasi) dan render rekap awal
+    // INIT
     (async () => {
       await loadAllTransaksi();
       await renderRekap();
