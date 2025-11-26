@@ -106,14 +106,21 @@
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--gray);
-      transition: background 0.2s, color 0.2s, transform 0.1s;
+      transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.1s;
     }
 
     .tab.active {
-      background: linear-gradient(135deg, var(--purple), var(--blue));
       color: var(--white);
       box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
       transform: translateY(-1px);
+    }
+
+    .tab[data-tab="input"].active {
+      background: var(--blue);   /* kiri: biru */
+    }
+
+    .tab[data-tab="rekap"].active {
+      background: var(--purple); /* kanan: ungu */
     }
 
     .content {
@@ -207,8 +214,8 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
+      background: linear-gradient(135deg, var(--purple), var(--blue)); /* default tunggal: gradasi */
       color: var(--white);
-      background: linear-gradient(135deg, var(--purple), var(--blue));
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
       display: inline-flex;
       align-items: center;
@@ -240,13 +247,33 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s, border-color 0.1s, color 0.1s;
     }
 
     .btn-ghost:hover {
       background: rgba(219, 234, 254, 0.95);
       transform: translateY(-1px);
       box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+    }
+
+    /* VARIAN WARNA PAIR: kiri biru, kanan ungu */
+    .btn-blue-solid {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: rgba(37, 99, 235, 0.9);
+    }
+
+    .btn-purple-solid {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: rgba(124, 58, 237, 0.9);
+    }
+
+    /* VARIAN TUNGGAL: gradasi biru-ungu untuk tombol berbasis ghost */
+    .btn-mixed {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      border-color: transparent;
     }
 
     .error {
@@ -276,16 +303,39 @@
     }
 
     .toggle-btn.active {
-      background: linear-gradient(135deg, var(--purple), var(--blue));
-      color: var(--white);
+      color: #ffffff;
       border-color: transparent;
       box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
       transform: translateY(-1px);
     }
 
+    /* kiri: biru, kanan: ungu untuk toggle */
+    #pelaporToggle .toggle-btn[data-value="Abi"].active,
+    #jenisToggle .toggle-btn[data-value="pemasukan"].active {
+      background: var(--blue);
+    }
+
+    #pelaporToggle .toggle-btn[data-value="Umi"].active,
+    #jenisToggle .toggle-btn[data-value="pengeluaran"].active {
+      background: var(--purple);
+    }
+
     .toggle-btn:active {
       transform: translateY(0);
       box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    /* FORM ACTIONS UNTUK REVISI + SIMPAN */
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions button {
+      flex: 1;
+      justify-content: center;
     }
 
     /* REKAP STYLING */
@@ -383,6 +433,25 @@
       grid-column: 1 / -1;
       justify-content: center;
     }
+
+    /* INPUT BULAN = TAMPIL SEPERTI TOMBOL */
+    .month-input {
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      padding: 7px 12px;
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--dark);
+      outline: none;
+      min-width: 140px;
+      transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
+    }
+
+    .month-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -396,8 +465,8 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="input">Input Laporan</button>
-      <button class="tab" data-tab="rekap">Rekap Bulanan</button>
+      <button class="tab active" data-tab="input">Input laporan</button>
+      <button class="tab" data-tab="rekap">Rekap bulanan</button>
     </div>
 
     <div class="content">
@@ -447,20 +516,27 @@
               <label for="jumlah">Jumlah (Rp)</label>
               <input type="number" id="jumlah" min="0" step="1000" placeholder="misal: 500000" required />
             </div>
-
-            <div class="form-group full">
-              <label for="revisi">Revisi laporan (opsional)</label>
-              <input type="file" id="revisi" />
-              <small class="hint">
-                Template revisi dapat diambil dari file download di menu Rekap Bulanan.
-              </small>
-            </div>
           </div>
 
-          <button type="submit" class="btn-primary">
-            Simpan Laporan
-            <span>💾</span>
-          </button>
+          <!-- REVISI + SIMPAN DALAM SATU BARIS -->
+          <div class="form-group full" style="margin-top: 6px;">
+            <label>Revisi laporan (opsional)</label>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost btn-blue-solid" id="btnRevisiFile">
+                Pilih file revisi
+              </button>
+              <button type="submit" class="btn-primary btn-purple-solid">
+                Simpan laporan
+                <span>💾</span>
+              </button>
+            </div>
+            <small id="revisiFilename" class="hint">Belum ada file revisi dipilih.</small>
+            <input type="file" id="revisi" style="display:none" />
+            <small class="hint">
+              Template revisi dapat diambil dari file laporan bulanan di menu Rekap bulanan.
+            </small>
+          </div>
+
           <div id="error-msg" class="error" style="display: none;"></div>
         </form>
       </div>
@@ -481,8 +557,8 @@
             </div>
           </div>
           <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <input type="month" id="bulanRekap" />
-            <button class="btn-ghost" id="btnRefreshRekap">Terapkan</button>
+            <input type="month" id="bulanRekap" class="month-input" />
+            <button class="btn-ghost btn-mixed" id="btnRefreshRekap">Terapkan</button>
           </div>
         </div>
 
@@ -506,14 +582,14 @@
         <div class="rekap-section">
           <div class="rekap-title">Download rekap</div>
           <div class="download-grid">
-            <button class="btn-ghost" data-download="abi">
-              Download rekap laporan Abi ⬇️
+            <button class="btn-ghost btn-blue-solid" data-download="abi">
+              Laporan Abi ⬇️
             </button>
-            <button class="btn-ghost" data-download="umi">
-              Download rekap laporan Umi ⬇️
+            <button class="btn-ghost btn-purple-solid" data-download="umi">
+              Laporan Umi ⬇️
             </button>
-            <button class="btn-ghost btn-download-all" data-download="all">
-              Download rekap laporan Abi &amp; Umi ⬇️
+            <button class="btn-ghost btn-download-all btn-mixed" data-download="all">
+              Laporan Abi &amp; Umi ⬇️
             </button>
           </div>
         </div>
@@ -577,6 +653,10 @@
     const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
     const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
 
+    const revisiInput = document.getElementById("revisi");
+    const revisiBtn = document.getElementById("btnRevisiFile");
+    const revisiFilename = document.getElementById("revisiFilename");
+
     let transaksi = loadTransaksi();
 
     function refreshRincianDatalist() {
@@ -617,6 +697,19 @@
       });
     });
 
+    // Tombol pilih file revisi
+    revisiBtn.addEventListener("click", () => {
+      revisiInput.click();
+    });
+
+    revisiInput.addEventListener("change", () => {
+      if (revisiInput.files && revisiInput.files[0]) {
+        revisiFilename.textContent = "File revisi: " + revisiInput.files[0].name;
+      } else {
+        revisiFilename.textContent = "Belum ada file revisi dipilih.";
+      }
+    });
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       errorMsg.style.display = "none";
@@ -626,7 +719,6 @@
       const jenis = jenisEl.value;
       const rincian = rincianEl.value.trim();
       const jumlah = Number(document.getElementById("jumlah").value || 0);
-      const revisiInput = document.getElementById("revisi");
 
       if (!tanggal || !pelapor || !jenis || !rincian || !jumlah) {
         errorMsg.textContent = "Mohon lengkapi semua field wajib dan pastikan jumlah > 0.";
@@ -651,11 +743,14 @@
       transaksi.push(newItem);
       saveTransaksi(transaksi);
       refreshRincianDatalist();
+
       form.reset();
       pelaporEl.value = "";
       jenisEl.value = "";
       pelaporToggleBtns.forEach(b => b.classList.remove("active"));
       jenisToggleBtns.forEach(b => b.classList.remove("active"));
+      revisiFilename.textContent = "Belum ada file revisi dipilih.";
+
       alert("Laporan keuangan berhasil disimpan.");
     });
 
