@@ -269,7 +269,7 @@
       border-color: rgba(124, 58, 237, 0.9);
     }
 
-    /* VARIAN TUNGGAL: gradasi biru-ungu untuk tombol berbasis ghost */
+    /* VARIAN TUNGGAL: gradasi biru-ungu */
     .btn-mixed {
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: #ffffff;
@@ -597,35 +597,18 @@
     </div>
   </div>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <script>
-  // GANTI dengan URL & anon key project kamu
-  const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
+    // ==========================
+    // KONFIGURASI SUPABASE
+    // ==========================
+    const supabaseUrl = 'https://YOUR-PROJECT-ID.supabase.co'; // GANTI
+    const supabaseKey = 'YOUR-PUBLIC-ANON-KEY';                // GANTI
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  // ...lanjutan script yang lain di bawah
-  </script>
-
-  <script>
-    const STORAGE_KEY = "laporanKeuanganKeluarga";
-
-    function loadTransaksi() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveTransaksi(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+    // Cache lokal (dipakai hanya untuk rekomendasi rincian)
+    let transaksi = [];
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
@@ -642,7 +625,24 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     }
 
+    async function loadAllTransaksi() {
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .order('tanggal', { ascending: true });
+
+      if (error) {
+        console.error('Gagal load transaksi:', error);
+        transaksi = [];
+        return;
+      }
+
+      transaksi = data || [];
+    }
+
+    // ==========================
     // TAB
+    // ==========================
     const tabs = document.querySelectorAll(".tab");
     const panels = document.querySelectorAll(".tab-panel");
 
@@ -654,7 +654,9 @@
       });
     });
 
+    // ==========================
     // INPUT FORM
+    // ==========================
     const form = document.getElementById("form-laporan");
     const jenisEl = document.getElementById("jenis");      // hidden
     const pelaporEl = document.getElementById("pelapor");  // hidden
@@ -669,17 +671,24 @@
     const revisiBtn = document.getElementById("btnRevisiFile");
     const revisiFilename = document.getElementById("revisiFilename");
 
-    let transaksi = loadTransaksi();
-
-    function refreshRincianDatalist() {
+    async function refreshRincianDatalist() {
       const jenis = jenisEl.value;
       rincianListEl.innerHTML = "";
       if (!jenis) return;
 
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('rincian')
+        .eq('jenis', jenis);
+
+      if (error) {
+        console.error('Gagal load rincian:', error);
+        return;
+      }
+
       const setRincian = new Set(
-        transaksi
-          .filter(t => t.jenis === jenis)
-          .map(t => t.rincian.trim())
+        (data || [])
+          .map(t => (t.rincian || '').trim())
           .filter(Boolean)
       );
 
@@ -722,7 +731,7 @@
       }
     });
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       errorMsg.style.display = "none";
 
@@ -741,32 +750,44 @@
       const revisiNamaFile = revisiInput.files[0]?.name || null;
 
       const newItem = {
-        id: Date.now(),
         tanggal,
-        bulanKey: getMonthKey(tanggal),
+        bulan_key: getMonthKey(tanggal),
         pelapor,
         jenis,
         rincian,
         jumlah,
-        revisiNamaFile,
-        createdAt: new Date().toISOString(),
+        revisi_nama_file: revisiNamaFile,
+        // created_at otomatis oleh Supabase (default now())
       };
 
-      transaksi.push(newItem);
-      saveTransaksi(transaksi);
-      refreshRincianDatalist();
+      const { error } = await supabase
+        .from('transaksi_keuangan')
+        .insert([newItem]);
+
+      if (error) {
+        console.error('Gagal simpan transaksi:', error);
+        errorMsg.textContent = "Gagal menyimpan ke server. Coba lagi.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      await loadAllTransaksi();
+      await refreshRincianDatalist();
 
       form.reset();
       pelaporEl.value = "";
       jenisEl.value = "";
       pelaporToggleBtns.forEach(b => b.classList.remove("active"));
       jenisToggleBtns.forEach(b => b.classList.remove("active"));
+      revisiInput.value = "";
       revisiFilename.textContent = "Belum ada file revisi dipilih.";
 
       alert("Laporan keuangan berhasil disimpan.");
     });
 
-    // REKAP
+    // ==========================
+    // REKAP BULANAN
+    // ==========================
     const bulanRekapEl = document.getElementById("bulanRekap");
     const abiGrid = document.getElementById("rekap-abi-grid");
     const umiGrid = document.getElementById("rekap-umi-grid");
@@ -779,8 +800,28 @@
       bulanRekapEl.value = key;
     })();
 
-    function hitungRekap(bulanKey) {
-      const dataBulan = transaksi.filter(t => t.bulanKey === bulanKey);
+    async function hitungRekap(bulanKey) {
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey);
+
+      if (error) {
+        console.error('Gagal ambil rekap:', error);
+        return {
+          pemasukanAbi: 0,
+          pengeluaranAbi: 0,
+          sisaAbi: 0,
+          pemasukanUmi: 0,
+          pengeluaranUmi: 0,
+          sisaUmi: 0,
+          pemasukanAll: 0,
+          pengeluaranAll: 0,
+          sisaAll: 0,
+        };
+      }
+
+      const dataBulan = data || [];
 
       const sum = (filterFn) =>
         dataBulan.filter(filterFn).reduce((acc, cur) => acc + Number(cur.jumlah || 0), 0);
@@ -806,13 +847,12 @@
       };
     }
 
-    function renderRekap() {
+    async function renderRekap() {
       const bulanKey = bulanRekapEl.value;
       if (!bulanKey) return;
 
-      const r = hitungRekap(bulanKey);
+      const r = await hitungRekap(bulanKey);
 
-      // Isi grid Abi
       abiGrid.innerHTML = `
         <div class="rekap-card">
           <h3>Pemasukan Abi</h3>
@@ -831,7 +871,6 @@
         </div>
       `;
 
-      // Isi grid Umi
       umiGrid.innerHTML = `
         <div class="rekap-card">
           <h3>Pemasukan Umi</h3>
@@ -855,21 +894,27 @@
       renderRekap();
     });
 
-    renderRekap();
-
     // DOWNLOAD CSV
-    function downloadCSV(bulanKey, tipe) {
-      const dataBulan = transaksi.filter(t => t.bulanKey === bulanKey);
+    async function downloadCSV(bulanKey, tipe) {
+      let query = supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey);
 
-      let filtered;
-      if (tipe === "abi") {
-        filtered = dataBulan.filter(t => t.pelapor === "Abi");
-      } else if (tipe === "umi") {
-        filtered = dataBulan.filter(t => t.pelapor === "Umi");
-      } else {
-        filtered = dataBulan;
+      if (tipe === 'abi') {
+        query = query.eq('pelapor', 'Abi');
+      } else if (tipe === 'umi') {
+        query = query.eq('pelapor', 'Umi');
       }
 
+      const { data, error } = await query.order('tanggal', { ascending: true });
+
+      if (error) {
+        console.error('Gagal ambil data untuk download:', error);
+        return;
+      }
+
+      const filtered = data || [];
       const header = ["Tanggal", "Pelapor", "Jenis", "Rincian", "Jumlah"];
       const rows = [header];
 
@@ -878,7 +923,7 @@
           t.tanggal,
           t.pelapor,
           t.jenis,
-          t.rincian.replace(/"/g, '""'),
+          (t.rincian || "").replace(/"/g, '""'),
           t.jumlah,
         ]);
       });
@@ -914,6 +959,12 @@
         downloadCSV(bulanKey, tipe);
       });
     });
+
+    // INIT: load transaksi (untuk rekomendasi) dan render rekap awal
+    (async () => {
+      await loadAllTransaksi();
+      await renderRekap();
+    })();
   </script>
 </body>
 </html>
