@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detail Laporan Keuangan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --purple-soft: #ede9fe;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --white: #ffffff;
+      --dark: #0f172a;
+      --gray-soft: #f3f4f6;
+      --gray: #6b7280;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--purple-soft), var(--blue-soft));
+      padding: 16px;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 24px;
+      padding: 18px 14px 22px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 32px;
+      }
+      .page {
+        padding: 22px 22px 26px;
+        border-radius: 28px;
+      }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .back-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      background: #ffffff;
+      color: var(--gray);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-back:hover {
+      background: var(--gray-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+    }
+
+    .info-label {
+      font-size: 0.78rem;
+      color: var(--gray);
+    }
+
+    .info-label strong {
+      color: var(--dark);
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead {
+      background: linear-gradient(135deg, var(--blue-soft), var(--purple-soft));
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      text-align: center;
+      width: 40px;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      text-align: right;
+      min-width: 120px;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    tfoot tr {
+      background: #f3f4f6;
+      font-weight: 700;
+    }
+
+    tfoot td {
+      border-top: 1px solid #d1d5db;
+    }
+
+    .empty-state {
+      font-size: 0.8rem;
+      color: var(--gray);
+      padding: 12px 4px 4px;
+    }
+
+    .badge-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--blue);
+    }
+
+    .badge-type.sisa {
+      background: rgba(124, 58, 237, 0.08);
+      color: var(--purple);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <div class="title" id="pageTitle">Detail Laporan</div>
+        <div class="subtitle" id="pageSubtitle"></div>
+      </div>
+      <span class="tag" id="tagRole"></span>
+    </div>
+
+    <div class="back-row">
+      <button class="btn-back" type="button" onclick="window.location.href='index.html#rekap'">
+        ← Kembali ke rekap bulanan
+      </button>
+      <div class="info-label" id="infoBulan"></div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="detailTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Rincian</th>
+            <th>Jumlah (Rp)</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyDetail">
+          <!-- diisi via JS -->
+        </tbody>
+        <tfoot id="tfootDetail">
+          <!-- total -->
+        </tfoot>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Belum ada transaksi untuk filter ini.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Sama seperti index.html: GANTI dengan Supabase kamu
+    const supabaseUrl = 'https://YOUR-PROJECT-ID.supabase.co'; // GANTI
+    const supabaseKey = 'YOUR-PUBLIC-ANON-KEY';                // GANTI
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role');   // Abi / Umi
+    const tipe = params.get('tipe');   // pemasukan / pengeluaran / sisa
+    const bulanKey = params.get('bulan'); // YYYY-MM
+
+    const pageTitleEl   = document.getElementById("pageTitle");
+    const pageSubtitleEl= document.getElementById("pageSubtitle");
+    const tagRoleEl     = document.getElementById("tagRole");
+    const infoBulanEl   = document.getElementById("infoBulan");
+    const tbodyDetail   = document.getElementById("tbodyDetail");
+    const tfootDetail   = document.getElementById("tfootDetail");
+    const emptyStateEl  = document.getElementById("emptyState");
+
+    function formatRupiah(angka) {
+      const n = Number(angka) || 0;
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+      }).format(n);
+    }
+
+    function monthLabel(bulanKey) {
+      if (!bulanKey) return "-";
+      const [y, m] = bulanKey.split("-");
+      const monthNames = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      const idx = Number(m) - 1;
+      const nama = monthNames[idx] || m;
+      return `${nama} ${y}`;
+    }
+
+    function tipeLabel(role, tipe) {
+      if (!role || !tipe) return "Detail Laporan";
+      const r = role;
+      if (tipe === "pemasukan") return `Pemasukan ${r}`;
+      if (tipe === "pengeluaran") return `Pengeluaran ${r}`;
+      if (tipe === "sisa") return `Sisa ${r}`;
+      return "Detail Laporan";
+    }
+
+    function tipeSubtitle(tipe) {
+      if (tipe === "pemasukan") {
+        return "Menampilkan semua transaksi pemasukan sesuai bulan yang dipilih.";
+      } else if (tipe === "pengeluaran") {
+        return "Menampilkan semua transaksi pengeluaran sesuai bulan yang dipilih.";
+      } else if (tipe === "sisa") {
+        return "Menampilkan semua transaksi dan menghitung sisa (pemasukan - pengeluaran).";
+      }
+      return "";
+    }
+
+    async function loadDetail() {
+      if (!role || !tipe || !bulanKey) {
+        pageTitleEl.textContent = "Filter tidak lengkap";
+        emptyStateEl.textContent = "URL kurang lengkap. Pastikan membuka halaman ini lewat kotak rekap bulanan.";
+        emptyStateEl.style.display = "block";
+        return;
+      }
+
+      pageTitleEl.textContent = tipeLabel(role, tipe);
+      pageSubtitleEl.textContent = tipeSubtitle(tipe);
+      tagRoleEl.textContent = `Pelapor: ${role}`;
+      infoBulanEl.innerHTML = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
+
+      let query = supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey)
+        .eq('pelapor', role);
+
+      // Untuk tipe pemasukan/pengeluaran → filter jenis
+      if (tipe === "pemasukan" || tipe === "pengeluaran") {
+        query = query.eq('jenis', tipe);
+      }
+      // tipe 'sisa' → ambil semua jenis, hitung sisa di bawah
+
+      const { data, error } = await query.order('tanggal', { ascending: true });
+
+      if (error) {
+        console.error('Gagal load detail:', error);
+        emptyStateEl.textContent = "Gagal memuat data dari server.";
+        emptyStateEl.style.display = "block";
+        return;
+      }
+
+      const rows = data || [];
+
+      if (!rows.length) {
+        tbodyDetail.innerHTML = "";
+        tfootDetail.innerHTML = "";
+        emptyStateEl.style.display = "block";
+        return;
+      }
+
+      emptyStateEl.style.display = "none";
+
+      let htmlBody = "";
+      let total = 0;
+      let totalPemasukan = 0;
+      let totalPengeluaran = 0;
+
+      rows.forEach((t, idx) => {
+        const jumlah = Number(t.jumlah || 0);
+        total += jumlah;
+        if (t.jenis === "pemasukan") totalPemasukan += jumlah;
+        if (t.jenis === "pengeluaran") totalPengeluaran += jumlah;
+
+        htmlBody += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${t.tanggal}</td>
+            <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+            <td>${formatRupiah(jumlah)}</td>
+          </tr>
+        `;
+      });
+
+      tbodyDetail.innerHTML = htmlBody;
+
+      // Baris total
+      let labelTotal = "Total";
+      let nilaiTotal = total;
+
+      if (tipe === "pemasukan") {
+        labelTotal = "Total pemasukan";
+        nilaiTotal = total; // sudah hanya pemasukan yg diambil
+      } else if (tipe === "pengeluaran") {
+        labelTotal = "Total pengeluaran";
+        nilaiTotal = total;
+      } else if (tipe === "sisa") {
+        labelTotal = "Total sisa (pemasukan - pengeluaran)";
+        nilaiTotal = totalPemasukan - totalPengeluaran;
+      }
+
+      tfootDetail.innerHTML = `
+        <tr>
+          <td></td>
+          <td></td>
+          <td>${labelTotal}</td>
+          <td>${formatRupiah(nilaiTotal)}</td>
+        </tr>
+      `;
+
+      // Badge tipe
+      const badgeSpan = document.createElement("span");
+      badgeSpan.className = "badge-type" + (tipe === "sisa" ? " sisa" : "");
+      badgeSpan.textContent = tipe.toUpperCase();
+      pageSubtitleEl.appendChild(document.createTextNode(" "));
+      pageSubtitleEl.appendChild(badgeSpan);
+    }
+
+    loadDetail();
+  </script>
+</body>
+</html>
