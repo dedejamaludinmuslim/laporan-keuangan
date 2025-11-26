@@ -79,7 +79,7 @@
 
     .badge-row {
       display: flex;
-      justify-content: space-between; /* brand kiri, pelapor kanan */
+      justify-content: space-between;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
@@ -145,11 +145,26 @@
       color: var(--dark);
     }
 
+    /* CARD BLOCK (kotak isi) */
+    .card-block {
+      margin-top: 10px;
+      padding: 12px 10px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    @media (min-width: 768px) {
+      .card-block {
+        padding: 14px 12px;
+      }
+    }
+
     /* TABEL */
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
     table {
@@ -242,7 +257,7 @@
 
     /* CHART RINCIAN */
     .chart-section {
-      margin-top: 16px;
+      margin-top: 4px;
     }
 
     .chart-title {
@@ -250,12 +265,14 @@
       font-weight: 600;
       color: var(--dark);
       margin-bottom: 4px;
+      text-align: center;
     }
 
     .chart-subtitle {
       font-size: 0.75rem;
       color: var(--gray);
       margin-bottom: 6px;
+      text-align: center;
     }
 
     .chart-bar-list {
@@ -327,46 +344,49 @@
       <div class="info-label" id="infoBulan"></div>
     </div>
 
-    <!-- TABEL -->
-    <div class="table-wrapper">
-      <table id="detailTable">
-        <thead>
-          <tr id="theadRow">
-            <th>No</th>
-            <th>Tanggal</th>
-            <th>Rincian</th>
-            <th>Jumlah (Rp)</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyDetail">
-          <!-- diisi via JS -->
-        </tbody>
-        <tfoot id="tfootDetail">
-          <!-- total -->
-        </tfoot>
-      </table>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        Belum ada transaksi untuk filter ini.
+    <!-- KOTAK 1: TABEL + SIMPAN -->
+    <div class="card-block">
+      <div class="table-wrapper">
+        <table id="detailTable">
+          <thead>
+            <tr id="theadRow">
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Rincian</th>
+              <th>Jumlah (Rp)</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyDetail">
+            <!-- diisi via JS -->
+          </tbody>
+          <tfoot id="tfootDetail">
+            <!-- total -->
+          </tfoot>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none;">
+          Belum ada transaksi untuk filter ini.
+        </div>
+      </div>
+
+      <div class="edit-actions">
+        <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
+          Simpan revisi nominal
+        </button>
+        <div class="edit-hint" id="editHint">
+          Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
+        </div>
       </div>
     </div>
 
-    <!-- CHART RINCIAN -->
-    <div class="chart-section">
-      <div class="chart-title" id="chartTitle">Diagram rincian</div>
-      <div class="chart-subtitle" id="chartSubtitle"></div>
-      <div id="chartBarList" class="chart-bar-list"></div>
-      <div class="empty-state" id="chartEmpty" style="display:none;">
-        Belum ada cukup data untuk menampilkan diagram rincian.
-      </div>
-    </div>
-
-    <!-- EDIT NOMINAL -->
-    <div class="edit-actions">
-      <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
-        Simpan revisi nominal
-      </button>
-      <div class="edit-hint" id="editHint">
-        Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
+    <!-- KOTAK 2: CHART -->
+    <div class="card-block">
+      <div class="chart-section">
+        <div class="chart-title" id="chartTitle">Diagram rincian</div>
+        <div class="chart-subtitle" id="chartSubtitle"></div>
+        <div id="chartBarList" class="chart-bar-list"></div>
+        <div class="empty-state" id="chartEmpty" style="display:none;">
+          Belum ada cukup data untuk menampilkan diagram rincian.
+        </div>
       </div>
     </div>
   </div>
@@ -533,10 +553,10 @@
         return;
       }
 
-      // Tentukan basis data chart:
+      // basis chart:
       // - pemasukan → breakdown pemasukan
       // - pengeluaran → breakdown pengeluaran
-      // - sisa → fokus pengeluaran (sesuai permintaan: % terhadap pengeluaran)
+      // - sisa → fokus pengeluaran (persen terhadap pengeluaran)
       let baseJenis = null;
       if (tipe === "pemasukan") baseJenis = "pemasukan";
       else if (tipe === "pengeluaran" || tipe === "sisa") baseJenis = "pengeluaran";
@@ -582,13 +602,15 @@
 
       arr.sort((a, b) => b.total - a.total || b.count - a.count);
 
-      const top = arr.slice(0, 8); // batasi 8 rincian teratas
+      const top = arr.slice(0, 8);
       const maxTotal = Math.max(...top.map(x => x.total));
 
       const jenisLabel = baseJenis === "pemasukan" ? "pemasukan" : "pengeluaran";
-      chartTitleEl.textContent = `Diagram rincian ${jenisLabel} terbanyak`;
+      const titleLabel = baseJenis === "pemasukan" ? "Pemasukan terbanyak" : "Pengeluaran terbanyak";
+
+      chartTitleEl.textContent = titleLabel;
       chartSubtitleEl.textContent =
-        `Menampilkan rincian dengan total ${jenisLabel} terbesar pada bulan ini.`;
+        `Rincian dengan total ${jenisLabel} terbesar pada bulan ini.`;
 
       top.forEach(item => {
         const percent = (item.total / grandTotal) * 100;
@@ -621,10 +643,10 @@
       pendingEdits.clear();
       updateEditHint();
 
-      pageTitleEl.textContent   = tipeLabel(role, tipe);
+      pageTitleEl.textContent    = tipeLabel(role, tipe);
       pageSubtitleEl.textContent = tipeSubtitle(tipe);
-      tagRoleEl.textContent     = `Pelapor: ${role}`;
-      infoBulanEl.innerHTML     = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
+      tagRoleEl.textContent      = `Pelapor: ${role}`;
+      infoBulanEl.innerHTML      = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
 
       if (tipe === "sisa") {
         theadRow.innerHTML = `
@@ -709,7 +731,7 @@
           </tr>
         `;
       } else {
-        // MODE SISA: 6 kolom, saldo berjalan
+        // MODE SISA
         let htmlBody = "";
         let runningSisa = 0;
         let totalPemasukan = 0;
