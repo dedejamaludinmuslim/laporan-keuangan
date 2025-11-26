@@ -71,13 +71,13 @@
     }
 
     .title-group h1 {
-      font-size: 1.15rem;      /* sama dengan .title di detail.html */
+      font-size: 0.95rem;
       font-weight: 700;
       color: #ffffff;
     }
 
     .title-group p {
-      font-size: 0.85rem;      /* sama dengan .subtitle di detail.html */
+      font-size: 0.8rem;
       color: #f3f4f6;
       margin-top: 4px;
     }
@@ -213,7 +213,7 @@
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: var(--white);
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
-      display: inline-flex;
+      display: inline-flex;       /* penting supaya tidak full width */
       align-items: center;
       justify-content: center;
       gap: 6px;
@@ -426,18 +426,6 @@
       margin-top: 2px;
     }
 
-    .download-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .btn-download-all {
-      grid-column: 1 / -1;
-      justify-content: center;
-    }
-
     .month-input {
       border-radius: 999px;
       border: 1px solid rgba(37, 99, 235, 0.4);
@@ -470,7 +458,7 @@
     <div class="app-header">
       <div class="title-group">
         <h1>Laporan Keuangan Rumah Tangga</h1>
-        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
+        <p>Monitoring pemasukan &amp; pengeluaran Abi–Umi dalam satu layar.</p>
       </div>
     </div>
 
@@ -527,7 +515,7 @@
             </div>
           </div>
 
-          <!-- TOMBOL SIMPAN SAJA, DI TENGAH -->
+          <!-- TOMBOL SIMPAN, TIDAK FULL WIDTH, DI TENGAH -->
           <div class="form-group full" style="margin-top: 10px; text-align: center;">
             <button type="submit" class="btn-primary btn-mixed">
               Simpan
@@ -869,7 +857,7 @@
       });
     }
 
-    btnRefresh.addEventListener("click", () => {
+    btnRefreshRekap.addEventListener("click", () => {
       renderRekap();
     });
 
