@@ -17,6 +17,11 @@
       --red: #ef4444;
     }
 
+    html {
+      font-size: 17px; /* default 16px, ini kita gedein sedikit */
+    }
+
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -90,25 +95,6 @@
         white-space: nowrap;
       }
       
-      /* chip tipe (PEMASUKAN / PENGELUARAN / SISA) */
-      .badge-type {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 0.7rem;
-        background: rgba(37, 99, 235, 0.08);
-        color: var(--blue);
-        margin-top: 4px;
-      }
-      
-      .badge-type.sisa {
-        background: rgba(124, 58, 237, 0.08);
-        color: var(--purple);
-      }
-
-
     .back-row {
       display: flex;
       justify-content: space-between;
@@ -624,14 +610,6 @@
           </tr>
         `;
       }
-
-      // Badge tipe: letakkan di bawah kotak judul, bareng chip Pelapor
-      const badgeSpan = document.createElement("span");
-      badgeSpan.className = "badge-type" + (tipe === "sisa" ? " sisa" : "");
-      badgeSpan.textContent = tipe.toUpperCase();
-
-      const headerEl = document.querySelector(".header");
-      headerEl.appendChild(badgeSpan);
 
       // aktifkan edit nominal
       attachEditListeners();
