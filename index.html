@@ -26,79 +26,84 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
+    /* MOBILE-FIRST BODY */
     body {
       min-height: 100vh;
       background: radial-gradient(circle at top, var(--purple-soft), var(--blue-soft));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      color: var(--dark);
+      padding: 16px;
     }
 
+    /* CONTAINER APP: FULL WIDTH DI HP, TENGAH DI DESKTOP */
     .app {
       width: 100%;
-      max-width: 1040px;
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
-      border-radius: 28px;
-      padding: 24px 24px 32px;
+      max-width: 720px;      /* supaya di desktop tidak terlalu lebar */
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+      border-radius: 24px;
+      padding: 18px 16px 24px;
       backdrop-filter: blur(10px);
     }
 
     @media (min-width: 768px) {
+      body {
+        padding: 32px;
+      }
       .app {
-        padding: 28px 32px 36px;
+        padding: 22px 24px 28px;
+        border-radius: 28px;
       }
     }
 
     .app-header {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
+      gap: 8px;
+      align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .title-group h1 {
-      font-size: 1.4rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--dark);
     }
 
     .title-group p {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: var(--gray);
+      margin-top: 2px;
     }
 
     .badge {
-      padding: 6px 12px;
+      padding: 4px 10px;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
       background: var(--purple-soft);
       color: var(--purple);
+      white-space: nowrap;
     }
 
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
+      gap: 6px;
+      margin-bottom: 14px;
       background: var(--gray-soft);
-      padding: 4px;
+      padding: 3px;
       border-radius: 999px;
     }
 
     .tab {
       flex: 1;
       text-align: center;
-      padding: 8px 10px;
+      padding: 7px 8px;
       border-radius: 999px;
       border: none;
       background: transparent;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--gray);
       transition: background 0.2s, color 0.2s, transform 0.1s;
@@ -107,33 +112,33 @@
     .tab.active {
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: var(--white);
-      box-shadow: 0 8px 16px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
       transform: translateY(-1px);
     }
 
     .content {
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .card {
       background: var(--white);
       border-radius: var(--radius-xl);
-      padding: 18px 18px 20px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      padding: 14px 12px 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
     }
 
     .section-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .section-title span.dot {
-      width: 9px;
-      height: 9px;
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
       background: linear-gradient(135deg, var(--purple), var(--blue));
     }
@@ -141,7 +146,7 @@
     .form-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px 16px;
+      gap: 10px 12px;
     }
 
     @media (min-width: 640px) {
@@ -153,7 +158,7 @@
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .form-group.full {
@@ -161,7 +166,7 @@
     }
 
     label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: var(--gray);
     }
@@ -172,15 +177,15 @@
     select {
       border-radius: 999px;
       border: 1px solid #e5e7eb;
-      padding: 8px 12px;
-      font-size: 0.9rem;
+      padding: 8px 11px;
+      font-size: 0.85rem;
       outline: none;
       background: #f9fafb;
       transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
 
     input[type="file"] {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
 
     input:focus,
@@ -198,13 +203,13 @@
     .btn-primary {
       border-radius: 999px;
       border: none;
-      padding: 9px 18px;
-      font-size: 0.9rem;
+      padding: 9px 14px;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       color: var(--white);
       background: linear-gradient(135deg, var(--purple), var(--blue));
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -215,22 +220,22 @@
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 26px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
     }
 
     .btn-primary:active {
       transform: translateY(0);
-      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.32);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.32);
     }
 
     .btn-ghost {
       border-radius: 999px;
       border: 1px solid rgba(37, 99, 235, 0.4);
-      padding: 7px 14px;
-      font-size: 0.8rem;
+      padding: 7px 12px;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--blue);
       display: inline-flex;
       align-items: center;
@@ -239,7 +244,7 @@
     }
 
     .btn-ghost:hover {
-      background: rgba(219, 234, 254, 0.9);
+      background: rgba(219, 234, 254, 0.95);
       transform: translateY(-1px);
       box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
     }
@@ -254,7 +259,7 @@
     .rekap-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 10px;
       margin-top: 10px;
     }
 
@@ -266,20 +271,20 @@
 
     .rekap-card {
       border-radius: var(--radius-lg);
-      padding: 10px 12px;
+      padding: 8px 10px;
       background: linear-gradient(135deg, var(--purple-soft), var(--white));
       border: 1px solid rgba(129, 140, 248, 0.25);
     }
 
     .rekap-card h3 {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: var(--gray);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .rekap-value {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: var(--dark);
     }
@@ -290,23 +295,19 @@
       margin-top: 2px;
     }
 
-    .tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--blue);
-      margin-left: 4px;
-    }
-
     .top-summarizer {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
       margin-bottom: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .top-summarizer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     .top-summarizer small {
@@ -316,15 +317,15 @@
 
     .pill-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     .pill {
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       background: rgba(148, 163, 184, 0.15);
       color: var(--gray);
     }
@@ -341,9 +342,9 @@
     <div class="app-header">
       <div class="title-group">
         <h1>Laporan Keuangan Rumah Tangga</h1>
-        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar sederhana.</p>
+        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
       </div>
-      <span class="badge">Family Finance • Abi &amp; Umi</span>
+      <span class="badge">Abi &amp; Umi Finance</span>
     </div>
 
     <div class="tabs">
@@ -381,14 +382,15 @@
                 <option value="pemasukan">Pemasukan</option>
                 <option value="pengeluaran">Pengeluaran</option>
               </select>
-              <small class="hint">Tipe laporan akan mempengaruhi rekomendasi rincian.</small>
+              <small class="hint">Tipe laporan mempengaruhi rekomendasi rincian.</small>
             </div>
 
             <div class="form-group">
               <label for="rincian">Rincian laporan</label>
-              <input type="text" id="rincian" list="rincianList" placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
+              <input type="text" id="rincian" list="rincianList"
+                     placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
               <datalist id="rincianList"></datalist>
-              <small class="hint">Ketik beberapa huruf, sistem akan menampilkan rincian yang pernah dipakai.</small>
+              <small class="hint">Ketik beberapa huruf, muncul rekomendasi dari laporan sebelumnya.</small>
             </div>
 
             <div class="form-group">
@@ -400,8 +402,7 @@
               <label for="revisi">Revisi laporan (opsional)</label>
               <input type="file" id="revisi" />
               <small class="hint">
-                Template revisi bisa diambil dari file yang di-download di menu Rekap Bulanan.
-                (Di versi produksi, file ini sebaiknya disimpan di server / cloud.)
+                Template revisi dapat diambil dari file download di menu Rekap Bulanan.
               </small>
             </div>
           </div>
@@ -423,13 +424,13 @@
 
         <div class="top-summarizer">
           <div>
-            <small>Pilih bulan &amp; tahun untuk melihat ringkasan:</small>
+            <small>Pilih bulan &amp; tahun:</small>
             <div class="pill-row">
               <span class="pill">Pemasukan vs Pengeluaran</span>
               <span class="pill">Abi • Umi • Gabungan</span>
             </div>
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
             <input type="month" id="bulanRekap" />
             <button class="btn-ghost" id="btnRefreshRekap">Terapkan</button>
           </div>
@@ -455,7 +456,6 @@
   </div>
 
   <script>
-    // ------- UTILITAS DASAR -------
     const STORAGE_KEY = "laporanKeuanganKeluarga";
 
     function loadTransaksi() {
@@ -488,7 +488,7 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     }
 
-    // ------- TAB HANDLING -------
+    // TAB
     const tabs = document.querySelectorAll(".tab");
     const panels = document.querySelectorAll(".tab-panel");
 
@@ -500,7 +500,7 @@
       });
     });
 
-    // ------- INPUT FORM -------
+    // INPUT FORM
     const form = document.getElementById("form-laporan");
     const jenisEl = document.getElementById("jenis");
     const rincianEl = document.getElementById("rincian");
@@ -547,18 +547,17 @@
         return;
       }
 
-      // Di sini bisa upload revisi ke server (jika ada backend)
       const revisiNamaFile = revisiInput.files[0]?.name || null;
 
       const newItem = {
         id: Date.now(),
         tanggal,
         bulanKey: getMonthKey(tanggal),
-        pelapor,           // Abi / Umi
-        jenis,             // pemasukan / pengeluaran
+        pelapor,
+        jenis,
         rincian,
         jumlah,
-        revisiNamaFile,    // hanya nama file untuk contoh
+        revisiNamaFile,
         createdAt: new Date().toISOString(),
       };
 
@@ -569,13 +568,12 @@
       alert("Laporan keuangan berhasil disimpan.");
     });
 
-    // ------- REKAP BULANAN -------
+    // REKAP
     const bulanRekapEl = document.getElementById("bulanRekap");
     const rekapGrid = document.getElementById("rekap-grid");
     const btnRefresh = document.getElementById("btnRefreshRekap");
     const downloadButtons = document.querySelectorAll("button[data-download]");
 
-    // Set default month = bulan sekarang
     (function setDefaultMonth() {
       const now = new Date();
       const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -644,10 +642,9 @@
       renderRekap();
     });
 
-    // Auto-render pertama kali
     renderRekap();
 
-    // ------- DOWNLOAD REKAP (CSV) -------
+    // DOWNLOAD CSV
     function downloadCSV(bulanKey, tipe) {
       const dataBulan = transaksi.filter(t => t.bulanKey === bulanKey);
 
@@ -657,7 +654,7 @@
       } else if (tipe === "umi") {
         filtered = dataBulan.filter(t => t.pelapor === "Umi");
       } else {
-        filtered = dataBulan; // all
+        filtered = dataBulan;
       }
 
       const header = ["Tanggal", "Pelapor", "Jenis", "Rincian", "Jumlah"];
