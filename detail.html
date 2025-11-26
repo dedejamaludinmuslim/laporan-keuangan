@@ -58,6 +58,40 @@
       flex-wrap: wrap;
     }
 
+    .title-block {
+      padding: 8px 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-block::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      bottom: 6px;
+      width: 90px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--blue)); /* sama keluarga dengan "Terapkan" */
+      opacity: 0.9;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-top: 2px;
+      padding-right: 10px;
+    }
+
     .title {
       font-size: 1.1rem;
       font-weight: 700;
@@ -233,12 +267,12 @@
 <body>
   <div class="page">
     <div class="header">
-      <div>
-        <div class="title" id="pageTitle">Detail Laporan</div>
-        <div class="subtitle" id="pageSubtitle"></div>
-      </div>
-      <span class="tag" id="tagRole"></span>
-    </div>
+     <div class="title-block">
+      <div class="title" id="pageTitle">Detail Laporan</div>
+      <div class="subtitle" id="pageSubtitle"></div>
+     </div>
+     <span class="tag" id="tagRole"></span>
+   </div>
 
     <div class="back-row">
       <button class="btn-back" type="button" onclick="window.location.href='index.html#rekap'">
