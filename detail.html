@@ -286,7 +286,7 @@
 
     <div class="edit-actions">
       <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
-        Simpan
+        Simpan 💾
       </button>
       <div class="edit-hint" id="editHint">
         Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
@@ -365,9 +365,9 @@
       const hasEdits = pendingEdits.size > 0;
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan revisi nominal" untuk mengupdate data.';
+        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan" untuk mengupdate data.';
       } else {
-        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
+        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan.';
       }
     }
 
@@ -637,7 +637,7 @@
 
       // reload data agar sisa / total ikut terhitung ulang
       await loadDetail();
-      alert("Revisi nominal berhasil disimpan.");
+      alert("Revisi berhasil disimpan.");
     });
 
     loadDetail();
