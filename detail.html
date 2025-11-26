@@ -49,46 +49,65 @@
       }
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      
+      /* kotak judul full width, teks center, putih */
+      .title-block {
+        padding: 14px 12px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--purple), var(--blue));
+        text-align: center;
+        color: #ffffff;
+        width: 100%;           /* penting: biar full width dan chip turun ke bawah */
+      }
+      
+      .title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+      
+      .subtitle {
+        font-size: 0.85rem;
+        color: #f3f4f6;
+        margin-top: 4px;
+        text-align: center;     /* pastikan deskripsi di tengah */
+      }
+      
+      .tag {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--purple-soft);
+        color: var(--purple);
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      
+      /* chip tipe (PEMASUKAN / PENGELUARAN / SISA) */
+      .badge-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--blue);
+        margin-top: 4px;
+      }
+      
+      .badge-type.sisa {
+        background: rgba(124, 58, 237, 0.08);
+        color: var(--purple);
+      }
 
-    .title-block {
-      padding: 14px 12px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--purple), var(--blue));
-      text-align: center;
-      color: #ffffff;
-      width: 100%;    
-    }
- 
-    .title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #ffffff;
-     } 
-
-    .subtitle {
-      font-size: 0.85rem;
-      color: #f3f4f6;
-      margin-top: 4px;
-      text-align: center;   /* tambah ini */
-    }
-
-    .tag {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--purple-soft);
-      color: var(--purple);
-      font-size: 0.7rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
 
     .back-row {
       display: flex;
@@ -606,12 +625,13 @@
         `;
       }
 
-      // Badge tipe di subtitle
+      // Badge tipe: letakkan di bawah kotak judul, bareng chip Pelapor
       const badgeSpan = document.createElement("span");
       badgeSpan.className = "badge-type" + (tipe === "sisa" ? " sisa" : "");
       badgeSpan.textContent = tipe.toUpperCase();
-      pageSubtitleEl.appendChild(document.createTextNode(" "));
-      pageSubtitleEl.appendChild(badgeSpan);
+
+      const headerEl = document.querySelector(".header");
+      headerEl.appendChild(badgeSpan);
 
       // aktifkan edit nominal
       attachEditListeners();
