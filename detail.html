@@ -17,11 +17,6 @@
       --red: #ef4444;
     }
 
-    html {
-      font-size: 17px; /* default 16px, ini kita gedein sedikit */
-    }
-
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -54,47 +49,46 @@
       }
     }
 
-      .header {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      
-      /* kotak judul full width, teks center, putih */
-      .title-block {
-        padding: 14px 12px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, var(--purple), var(--blue));
-        text-align: center;
-        color: #ffffff;
-        width: 100%;           /* penting: biar full width dan chip turun ke bawah */
-      }
-      
-      .title {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #ffffff;
-      }
-      
-      .subtitle {
-        font-size: 0.85rem;
-        color: #f3f4f6;
-        margin-top: 4px;
-        text-align: center;     /* pastikan deskripsi di tengah */
-      }
-      
-      .tag {
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: var(--purple-soft);
-        color: var(--purple);
-        font-size: 0.7rem;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-      
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title-block {
+      padding: 14px 12px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      text-align: center;
+      color: #ffffff;
+      flex: 1 1 auto;
+    }
+
+    .title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #f3f4f6;
+      margin-top: 4px;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     .back-row {
       display: flex;
       justify-content: space-between;
@@ -214,19 +208,35 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      align-items: center; /* tengah */
     }
 
     .btn-save-edit {
       border-radius: 999px;
       border: none;
-      padding: 8px 12px;
-      font-size: 0.8rem;
+      padding: 9px 14px;              /* sama seperti btn-primary */
+      font-size: 0.85rem;             /* sama seperti btn-primary */
       font-weight: 600;
       cursor: pointer;
-      background: linear-gradient(135deg, var(--purple), var(--blue));
+      background: linear-gradient(135deg, var(--purple), var(--blue)); /* sama gradient */
       color: #ffffff;
-      align-self: flex-start;
-      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);                 /* sama shadow */
+      display: inline-flex;           /* sama: icon + teks */
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, box-shadow 0.1s, opacity 0.1s;
+      margin-top: 4px;
+    }
+
+    .btn-save-edit:hover:enabled {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-save-edit:active:enabled {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.32);
     }
 
     .btn-save-edit:disabled {
@@ -238,6 +248,7 @@
     .edit-hint {
       font-size: 0.75rem;
       color: var(--gray);
+      text-align: center;
     }
 
     .edited-cell {
@@ -248,11 +259,11 @@
 <body>
   <div class="page">
     <div class="header">
-     <div class="title-block">
-      <div class="title" id="pageTitle">Detail Laporan</div>
-      <div class="subtitle" id="pageSubtitle"></div>
-     </div>
-     <span class="tag" id="tagRole"></span>
+      <div class="title-block">
+        <div class="title" id="pageTitle">Detail Laporan</div>
+        <div class="subtitle" id="pageSubtitle"></div>
+      </div>
+      <span class="tag" id="tagRole"></span>
     </div>
 
     <div class="back-row">
@@ -286,7 +297,8 @@
 
     <div class="edit-actions">
       <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
-        Simpan 💾
+        Simpan
+        <span>💾</span>
       </button>
       <div class="edit-hint" id="editHint">
         Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
@@ -365,9 +377,9 @@
       const hasEdits = pendingEdits.size > 0;
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan" untuk mengupdate data.';
+        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan 💾" untuk mengupdate data.';
       } else {
-        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan.';
+        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
       }
     }
 
@@ -406,7 +418,6 @@
               cell.innerHTML = formatRupiah(raw);
               cell.classList.add("edited-cell");
             } else {
-              // kalau batal / sama dengan original
               if (pendingEdits.has(id) && (isNaN(raw) || raw === original)) {
                 pendingEdits.delete(id);
               }
@@ -426,7 +437,6 @@
             if (e.key === "Enter") {
               input.blur();
             } else if (e.key === "Escape") {
-              // batal revisi: kembalikan tampilan awal
               cell.dataset.editing = "false";
               cell.innerHTML = formatRupiah(
                 pendingEdits.has(id) ? pendingEdits.get(id) : original
@@ -486,11 +496,9 @@
         .eq('bulan_key', bulanKey)
         .eq('pelapor', role);
 
-      // Untuk tipe pemasukan/pengeluaran → filter jenis
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
         query = query.eq('jenis', tipe);
       }
-      // tipe 'sisa' → ambil semua jenis
 
       const { data, error } = await query.order('tanggal', { ascending: true });
 
@@ -554,33 +562,28 @@
 
         rows.forEach((t, idx) => {
           const jumlah = Number(t.jumlah || 0);
-          let valPemasukan = "";
-          let valPengeluaran = "";
           let cellPemasukan = "";
           let cellPengeluaran = "";
 
           if (t.jenis === "pemasukan") {
             runningSisa += jumlah;
             totalPemasukan += jumlah;
-            valPemasukan = formatRupiah(jumlah);
             cellPemasukan = `
               <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
-                ${valPemasukan}
+                ${formatRupiah(jumlah)}
               </td>
             `;
             cellPengeluaran = `<td></td>`;
           } else if (t.jenis === "pengeluaran") {
             runningSisa -= jumlah;
             totalPengeluaran += jumlah;
-            valPengeluaran = formatRupiah(jumlah);
             cellPemasukan = `<td></td>`;
             cellPengeluaran = `
               <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
-                ${valPengeluaran}
+                ${formatRupiah(jumlah)}
               </td>
             `;
           } else {
-            // jaga-jaga kalau ada jenis lain
             cellPemasukan = `<td></td>`;
             cellPengeluaran = `<td></td>`;
           }
@@ -631,13 +634,11 @@
         if (error) {
           console.error("Gagal update id", id, error);
           alert("Ada revisi yang gagal disimpan. Cek console untuk detailnya.");
-          // lanjut ke id berikutnya saja
         }
       }
 
-      // reload data agar sisa / total ikut terhitung ulang
       await loadDetail();
-      alert("Revisi berhasil disimpan.");
+      alert("Revisi nominal berhasil disimpan.");
     });
 
     loadDetail();
