@@ -147,8 +147,13 @@
       width: 40px;
     }
 
+    /* Kolom jumlah dan sisa rata kanan */
     th:nth-child(4),
-    td:nth-child(4) {
+    td:nth-child(4),
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(6),
+    td:nth-child(6) {
       text-align: right;
       min-width: 120px;
     }
@@ -209,7 +214,7 @@
     <div class="table-wrapper">
       <table id="detailTable">
         <thead>
-          <tr>
+          <tr id="theadRow">
             <th>No</th>
             <th>Tanggal</th>
             <th>Rincian</th>
@@ -231,9 +236,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Sama seperti index.html: GANTI dengan Supabase kamu
-    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co'; // GANTI
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';                // GANTI
+    // Supabase config (sama dengan index.html)
+    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     const params = new URLSearchParams(window.location.search);
@@ -241,13 +246,14 @@
     const tipe = params.get('tipe');   // pemasukan / pengeluaran / sisa
     const bulanKey = params.get('bulan'); // YYYY-MM
 
-    const pageTitleEl   = document.getElementById("pageTitle");
-    const pageSubtitleEl= document.getElementById("pageSubtitle");
-    const tagRoleEl     = document.getElementById("tagRole");
-    const infoBulanEl   = document.getElementById("infoBulan");
-    const tbodyDetail   = document.getElementById("tbodyDetail");
-    const tfootDetail   = document.getElementById("tfootDetail");
-    const emptyStateEl  = document.getElementById("emptyState");
+    const pageTitleEl    = document.getElementById("pageTitle");
+    const pageSubtitleEl = document.getElementById("pageSubtitle");
+    const tagRoleEl      = document.getElementById("tagRole");
+    const infoBulanEl    = document.getElementById("infoBulan");
+    const tbodyDetail    = document.getElementById("tbodyDetail");
+    const tfootDetail    = document.getElementById("tfootDetail");
+    const emptyStateEl   = document.getElementById("emptyState");
+    const theadRow       = document.getElementById("theadRow");
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
@@ -285,7 +291,7 @@
       } else if (tipe === "pengeluaran") {
         return "Menampilkan semua transaksi pengeluaran sesuai bulan yang dipilih.";
       } else if (tipe === "sisa") {
-        return "Menampilkan semua transaksi dan menghitung sisa (pemasukan - pengeluaran).";
+        return "Menampilkan semua transaksi dan menghitung sisa (pemasukan - pengeluaran) sebagai saldo berjalan.";
       }
       return "";
     }
@@ -298,11 +304,32 @@
         return;
       }
 
+      // Atur judul & info
       pageTitleEl.textContent = tipeLabel(role, tipe);
       pageSubtitleEl.textContent = tipeSubtitle(tipe);
       tagRoleEl.textContent = `Pelapor: ${role}`;
       infoBulanEl.innerHTML = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
 
+      // Atur header tabel tergantung tipe
+      if (tipe === "sisa") {
+        theadRow.innerHTML = `
+          <th>No</th>
+          <th>Tanggal</th>
+          <th>Rincian</th>
+          <th>Jumlah Pemasukan (Rp)</th>
+          <th>Jumlah Pengeluaran (Rp)</th>
+          <th>Sisa (Rp)</th>
+        `;
+      } else {
+        theadRow.innerHTML = `
+          <th>No</th>
+          <th>Tanggal</th>
+          <th>Rincian</th>
+          <th>Jumlah (Rp)</th>
+        `;
+      }
+
+      // Query dasar
       let query = supabase
         .from('transaksi_keuangan')
         .select('*')
@@ -313,7 +340,7 @@
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
         query = query.eq('jenis', tipe);
       }
-      // tipe 'sisa' → ambil semua jenis, hitung sisa di bawah
+      // tipe 'sisa' → ambil semua jenis, nanti dipisah pemasukan/pengeluaran
 
       const { data, error } = await query.order('tanggal', { ascending: true });
 
@@ -335,54 +362,86 @@
 
       emptyStateEl.style.display = "none";
 
-      let htmlBody = "";
-      let total = 0;
-      let totalPemasukan = 0;
-      let totalPengeluaran = 0;
+      // === MODE PENERIMAAN / PENGELUARAN BIASA (4 kolom) ===
+      if (tipe === "pemasukan" || tipe === "pengeluaran") {
+        let htmlBody = "";
+        let total = 0;
 
-      rows.forEach((t, idx) => {
-        const jumlah = Number(t.jumlah || 0);
-        total += jumlah;
-        if (t.jenis === "pemasukan") totalPemasukan += jumlah;
-        if (t.jenis === "pengeluaran") totalPengeluaran += jumlah;
+        rows.forEach((t, idx) => {
+          const jumlah = Number(t.jumlah || 0);
+          total += jumlah;
 
-        htmlBody += `
+          htmlBody += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${t.tanggal}</td>
+              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+              <td>${formatRupiah(jumlah)}</td>
+            </tr>
+          `;
+        });
+
+        tbodyDetail.innerHTML = htmlBody;
+
+        const labelTotal = tipe === "pemasukan" ? "Total pemasukan" : "Total pengeluaran";
+
+        tfootDetail.innerHTML = `
           <tr>
-            <td>${idx + 1}</td>
-            <td>${t.tanggal}</td>
-            <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
-            <td>${formatRupiah(jumlah)}</td>
+            <td></td>
+            <td></td>
+            <td>${labelTotal}</td>
+            <td>${formatRupiah(total)}</td>
           </tr>
         `;
-      });
+      } else {
+        // === MODE SISA: 6 kolom, saldo berjalan ===
+        let htmlBody = "";
+        let runningSisa = 0;
+        let totalPemasukan = 0;
+        let totalPengeluaran = 0;
 
-      tbodyDetail.innerHTML = htmlBody;
+        rows.forEach((t, idx) => {
+          const jumlah = Number(t.jumlah || 0);
+          let valPemasukan = "";
+          let valPengeluaran = "";
 
-      // Baris total
-      let labelTotal = "Total";
-      let nilaiTotal = total;
+          if (t.jenis === "pemasukan") {
+            runningSisa += jumlah;
+            totalPemasukan += jumlah;
+            valPemasukan = formatRupiah(jumlah);
+          } else if (t.jenis === "pengeluaran") {
+            runningSisa -= jumlah;
+            totalPengeluaran += jumlah;
+            valPengeluaran = formatRupiah(jumlah);
+          }
 
-      if (tipe === "pemasukan") {
-        labelTotal = "Total pemasukan";
-        nilaiTotal = total; // sudah hanya pemasukan yg diambil
-      } else if (tipe === "pengeluaran") {
-        labelTotal = "Total pengeluaran";
-        nilaiTotal = total;
-      } else if (tipe === "sisa") {
-        labelTotal = "Total sisa (pemasukan - pengeluaran)";
-        nilaiTotal = totalPemasukan - totalPengeluaran;
+          htmlBody += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${t.tanggal}</td>
+              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+              <td>${valPemasukan}</td>
+              <td>${valPengeluaran}</td>
+              <td>${formatRupiah(runningSisa)}</td>
+            </tr>
+          `;
+        });
+
+        tbodyDetail.innerHTML = htmlBody;
+
+        tfootDetail.innerHTML = `
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Total sisa (pemasukan - pengeluaran)</td>
+            <td>${formatRupiah(totalPemasukan)}</td>
+            <td>${formatRupiah(totalPengeluaran)}</td>
+            <td>${formatRupiah(runningSisa)}</td>
+          </tr>
+        `;
       }
 
-      tfootDetail.innerHTML = `
-        <tr>
-          <td></td>
-          <td></td>
-          <td>${labelTotal}</td>
-          <td>${formatRupiah(nilaiTotal)}</td>
-        </tr>
-      `;
-
-      // Badge tipe
+      // Badge tipe di subtitle
       const badgeSpan = document.createElement("span");
       badgeSpan.className = "badge-type" + (tipe === "sisa" ? " sisa" : "");
       badgeSpan.textContent = tipe.toUpperCase();
