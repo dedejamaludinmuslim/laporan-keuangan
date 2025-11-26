@@ -1,3 +1,994 @@
+revisi:
+- mode index.html tidak bisa menyimpan data, cek kodenya:
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aplikasi Laporan Keuangan Rumah Tangga</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --purple-soft: #ede9fe;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --white: #ffffff;
+      --dark: #0f172a;
+      --gray-soft: #f3f4f6;
+      --gray: #6b7280;
+      --red: #ef4444;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--purple-soft), var(--blue-soft));
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+      border-radius: 24px;
+      padding: 18px 16px 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 32px;
+      }
+      .app {
+        padding: 22px 24px 28px;
+        border-radius: 28px;
+      }
+    }
+
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .title-group h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .title-group p {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--purple-soft);
+      color: var(--purple);
+      white-space: nowrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      background: var(--gray-soft);
+      padding: 3px;
+      border-radius: 999px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 8px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray);
+      transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .tab.active {
+      color: var(--white);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .tab[data-tab="input"].active {
+      background: var(--blue);
+    }
+
+    .tab[data-tab="rekap"].active {
+      background: var(--purple);
+    }
+
+    .content {
+      margin-top: 2px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 14px 12px 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px 12px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 11px;
+      font-size: 0.85rem;
+      outline: none;
+      background: #f9fafb;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input[type="file"] {
+      font-size: 0.75rem;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: #ffffff;
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: var(--gray);
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: var(--white);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, box-shadow 0.1s, opacity 0.1s;
+      margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.32);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      padding: 7px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(219, 234, 254, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+    }
+
+    .btn-blue-solid {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: rgba(37, 99, 235, 0.9);
+    }
+
+    .btn-purple-solid {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: rgba(124, 58, 237, 0.9);
+    }
+
+    .btn-mixed {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .error {
+      font-size: 0.8rem;
+      color: var(--red);
+      margin-top: 6px;
+    }
+
+    .toggle-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #f9fafb;
+      color: var(--gray);
+      text-align: center;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .toggle-btn.active {
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
+      transform: translateY(-1px);
+    }
+
+    #pelaporToggle .toggle-btn[data-value="Abi"].active,
+    #jenisToggle .toggle-btn[data-value="pemasukan"].active {
+      background: var(--blue);
+    }
+
+    #pelaporToggle .toggle-btn[data-value="Umi"].active,
+    #jenisToggle .toggle-btn[data-value="pengeluaran"].active {
+      background: var(--purple);
+    }
+
+    .toggle-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions button {
+      flex: 1;
+      justify-content: center;
+      margin-top: 0;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+    }
+
+    .top-summarizer {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .top-summarizer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .top-summarizer small {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--gray);
+    }
+
+    /* ROW BULAN & TOMBOL TERAPKAN */
+    .month-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+    }
+
+    .month-row > * {
+      flex: 1 1 0;
+    }
+
+    .rekap-section {
+      margin-top: 10px;
+    }
+
+    .rekap-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin: 4px 2px 6px;
+      color: var(--dark);
+    }
+
+    .rekap-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .rekap-card {
+      border-radius: var(--radius-lg);
+      padding: 8px 10px;
+      background: linear-gradient(135deg, var(--purple-soft), var(--white));
+      border: 1px solid rgba(129, 140, 248, 0.25);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+    }
+
+    .rekap-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+      border-color: rgba(129, 140, 248, 0.6);
+    }
+
+    .rekap-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .rekap-card h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 2px;
+    }
+
+    /* Sisa Abi & Sisa Umi: judul + isi di-center */
+    .rekap-card.full h3,
+    .rekap-card.full .rekap-value,
+    .rekap-card.full .rekap-sub {
+      text-align: center;
+    }
+
+    .rekap-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .rekap-sub {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-download-all {
+      grid-column: 1 / -1;
+      justify-content: center;
+    }
+
+    .month-input {
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--dark);
+      outline: none;
+      width: 100%;
+      text-align: center;
+      transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
+    }
+    #btnRefreshRekap {
+      width: 100%;
+      padding: 9px 12px;      /* sama dengan month-input */
+      font-size: 0.8rem;      /* sama juga */
+      text-align: center;     /* teks di tengah */
+    }
+
+    .month-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: #ffffff;
+    }
+
+    #btnRefreshRekap {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title-group">
+        <h1>Laporan Keuangan Rumah Tangga</h1>
+        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
+      </div>
+      <span class="badge">Abi &amp; Umi Finance</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="input">Input laporan</button>
+      <button class="tab" data-tab="rekap">Rekap bulanan</button>
+    </div>
+
+    <div class="content">
+      <!-- TAB INPUT -->
+      <div class="card tab-panel" id="tab-input">
+        <div class="section-title">
+          <span class="dot"></span>
+          <span>Input Laporan Keuangan</span>
+        </div>
+        <form id="form-laporan">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tanggal">Tanggal</label>
+              <input type="date" id="tanggal" required />
+            </div>
+
+            <div class="form-group">
+              <label>Siapa yang laporan?</label>
+              <div class="toggle-group" id="pelaporToggle">
+                <button type="button" class="toggle-btn" data-value="Abi">Abi</button>
+                <button type="button" class="toggle-btn" data-value="Umi">Umi</button>
+              </div>
+              <input type="hidden" id="pelapor" />
+            </div>
+
+            <div class="form-group">
+              <label>Jenis laporan</label>
+              <div class="toggle-group" id="jenisToggle">
+                <button type="button" class="toggle-btn" data-value="pemasukan">Pemasukan</button>
+                <button type="button" class="toggle-btn" data-value="pengeluaran">Pengeluaran</button>
+              </div>
+              <input type="hidden" id="jenis" />
+              <small class="hint">Tipe laporan mempengaruhi rekomendasi rincian.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="rincian">Rincian laporan</label>
+              <input type="text" id="rincian" list="rincianList"
+                     placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
+              <datalist id="rincianList"></datalist>
+              <small class="hint">Ketik beberapa huruf, muncul rekomendasi dari laporan sebelumnya.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="jumlah">Jumlah (Rp)</label>
+              <input type="number" id="jumlah" min="0" step="1000" placeholder="misal: 500000" required />
+            </div>
+          </div>
+
+          <div class="form-group full" style="margin-top: 6px;">
+            <label>Revisi laporan (opsional)</label>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost btn-blue-solid" id="btnRevisiFile">
+                Pilih file revisi
+              </button>
+              <button type="submit" class="btn-primary btn-purple-solid">
+                Simpan laporan
+                <span>💾</span>
+              </button>
+            </div>
+            <small id="revisiFilename" class="hint">Belum ada file revisi dipilih.</small>
+            <input type="file" id="revisi" style="display:none" />
+            <small class="hint">
+              Template revisi dapat diambil dari file laporan bulanan di menu Rekap bulanan.
+            </small>
+          </div>
+
+          <div id="error-msg" class="error" style="display: none;"></div>
+        </form>
+      </div>
+
+      <!-- TAB REKAP -->
+      <div class="card tab-panel" id="tab-rekap" style="display: none;">
+        <div class="section-title">
+          <span class="dot"></span>
+          <span>Rekap Laporan Bulanan</span>
+        </div>
+
+        <div class="top-summarizer">
+          <div>
+            <small>Pilih bulan &amp; tahun:</small>
+            <div class="pill-row">
+              <span class="pill">Pemasukan vs Pengeluaran</span>
+              <span class="pill">Abi • Umi • Gabungan</span>
+            </div>
+          </div>
+          <div class="month-row">
+            <input type="month" id="bulanRekap" class="month-input" />
+            <button class="btn-ghost btn-mixed" id="btnRefreshRekap">Terapkan</button>
+          </div>
+        </div>
+
+        <!-- REKAP ABI -->
+        <div class="rekap-section">
+          <div class="rekap-title">Rekap laporan Abi</div>
+          <div class="rekap-grid-2" id="rekap-abi-grid"></div>
+        </div>
+
+        <!-- REKAP UMI -->
+        <div class="rekap-section">
+          <div class="rekap-title">Rekap laporan Umi</div>
+          <div class="rekap-grid-2" id="rekap-umi-grid"></div>
+        </div>
+
+        <!-- DOWNLOAD REKAP -->
+        <div class="rekap-section">
+          <div class="rekap-title">Download rekap</div>
+          <div class="download-grid">
+            <button class="btn-ghost btn-blue-solid" data-download="abi">
+              Laporan Abi ⬇️
+            </button>
+            <button class="btn-ghost btn-purple-solid" data-download="umi">
+              Laporan Umi ⬇️
+            </button>
+            <button class="btn-ghost btn-download-all btn-mixed" data-download="all">
+              Laporan Abi &amp; Umi ⬇️
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co'; // GANTI
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';                // GANTI
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    let transaksi = [];
+
+    function formatRupiah(angka) {
+      const n = Number(angka) || 0;
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+      }).format(n);
+    }
+
+    function getMonthKey(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return null;
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    async function loadAllTransaksi() {
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .order('tanggal', { ascending: true });
+
+      if (error) {
+        console.error('Gagal load transaksi:', error);
+        transaksi = [];
+        return;
+      }
+
+      transaksi = data || [];
+    }
+
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.tab;
+        tabs.forEach(t => t.classList.toggle("active", t === tab));
+        panels.forEach(p => p.style.display = p.id === `tab-${target}` ? "block" : "none");
+      });
+    });
+
+    const form = document.getElementById("form-laporan");
+    const jenisEl = document.getElementById("jenis");
+    const pelaporEl = document.getElementById("pelapor");
+    const rincianEl = document.getElementById("rincian");
+    const rincianListEl = document.getElementById("rincianList");
+    const errorMsg = document.getElementById("error-msg");
+
+    const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
+    const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
+
+    const revisiInput = document.getElementById("revisi");
+    const revisiBtn = document.getElementById("btnRevisiFile");
+    const revisiFilename = document.getElementById("revisiFilename");
+
+    async function refreshRincianDatalist() {
+      const jenis = jenisEl.value;
+      rincianListEl.innerHTML = "";
+      if (!jenis) return;
+
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('rincian')
+        .eq('jenis', jenis);
+
+      if (error) {
+        console.error('Gagal load rincian:', error);
+        return;
+      }
+
+      const setRincian = new Set(
+        (data || [])
+          .map(t => (t.rincian || '').trim())
+          .filter(Boolean)
+      );
+
+      for (const r of setRincian) {
+        const opt = document.createElement("option");
+        opt.value = r;
+        rincianListEl.appendChild(opt);
+      }
+    }
+
+    pelaporToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        pelaporEl.value = value;
+        pelaporToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
+      });
+    });
+
+    jenisToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        jenisEl.value = value;
+        jenisToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
+        refreshRincianDatalist();
+      });
+    });
+
+    revisiBtn.addEventListener("click", () => {
+      revisiInput.click();
+    });
+
+    revisiInput.addEventListener("change", () => {
+      if (revisiInput.files && revisiInput.files[0]) {
+        revisiFilename.textContent = "File revisi: " + revisiInput.files[0].name;
+      } else {
+        revisiFilename.textContent = "Belum ada file revisi dipilih.";
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = "none";
+
+      const tanggal = document.getElementById("tanggal").value;
+      const pelapor = pelaporEl.value;
+      const jenis = jenisEl.value;
+      const rincian = rincianEl.value.trim();
+      const jumlah = Number(document.getElementById("jumlah").value || 0);
+
+      if (!tanggal || !pelapor || !jenis || !rincian || !jumlah) {
+        errorMsg.textContent = "Mohon lengkapi semua field wajib dan pastikan jumlah > 0.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const revisiNamaFile = revisiInput.files[0]?.name || null;
+
+      const newItem = {
+        tanggal,
+        bulan_key: getMonthKey(tanggal),
+        pelapor,
+        jenis,
+        rincian,
+        jumlah,
+        revisi_nama_file: revisiNamaFile,
+      };
+
+      const { error } = await supabase
+        .from('transaksi_keuangan')
+        .insert([newItem]);
+
+      if (error) {
+        console.error('Gagal simpan transaksi:', error);
+        errorMsg.textContent = "Gagal menyimpan ke server. Coba lagi.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      await loadAllTransaksi();
+      await refreshRincianDatalist();
+
+      form.reset();
+      pelaporEl.value = "";
+      jenisEl.value = "";
+      pelaporToggleBtns.forEach(b => b.classList.remove("active"));
+      jenisToggleBtns.forEach(b => b.classList.remove("active"));
+      revisiInput.value = "";
+      revisiFilename.textContent = "Belum ada file revisi dipilih.";
+
+      alert("Laporan keuangan berhasil disimpan.");
+    });
+
+    const bulanRekapEl = document.getElementById("bulanRekap");
+    const abiGrid = document.getElementById("rekap-abi-grid");
+    const umiGrid = document.getElementById("rekap-umi-grid");
+    const btnRefresh = document.getElementById("btnRefreshRekap");
+
+    (function setDefaultMonth() {
+      const now = new Date();
+      const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      bulanRekapEl.value = key;
+    })();
+
+    async function hitungRekap(bulanKey) {
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey);
+
+      if (error) {
+        console.error('Gagal ambil rekap:', error);
+        return {
+          pemasukanAbi: 0,
+          pengeluaranAbi: 0,
+          sisaAbi: 0,
+          pemasukanUmi: 0,
+          pengeluaranUmi: 0,
+          sisaUmi: 0,
+          pemasukanAll: 0,
+          pengeluaranAll: 0,
+          sisaAll: 0,
+        };
+      }
+
+      const dataBulan = data || [];
+
+      const sum = (filterFn) =>
+        dataBulan.filter(filterFn).reduce((acc, cur) => acc + Number(cur.jumlah || 0), 0);
+
+      const pemasukanAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pemasukan");
+      const pengeluaranAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pengeluaran");
+      const pemasukanUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pemasukan");
+      const pengeluaranUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pengeluaran");
+
+      const pemasukanAll = pemasukanAbi + pemasukanUmi;
+      const pengeluaranAll = pengeluaranAbi + pengeluaranUmi;
+
+      return {
+        pemasukanAbi,
+        pengeluaranAbi,
+        sisaAbi: pemasukanAbi - pengeluaranAbi,
+        pemasukanUmi,
+        pengeluaranUmi,
+        sisaUmi: pemasukanUmi - pengeluaranUmi,
+        pemasukanAll,
+        pengeluaranAll,
+        sisaAll: pemasukanAll - pengeluaranAll,
+      };
+    }
+
+    async function renderRekap() {
+      const bulanKey = bulanRekapEl.value;
+      if (!bulanKey) return;
+
+      const r = await hitungRekap(bulanKey);
+
+      abiGrid.innerHTML = `
+        <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pemasukan">
+          <h3>Pemasukan Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanAbi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pengeluaran">
+          <h3>Pengeluaran Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranAbi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card full rekap-click" data-role="Abi" data-tipe="sisa">
+          <h3>Sisa Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaAbi)}</div>
+          <div class="rekap-sub">Pemasukan Abi - Pengeluaran Abi</div>
+        </div>
+      `;
+
+      umiGrid.innerHTML = `
+        <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pemasukan">
+          <h3>Pemasukan Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanUmi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pengeluaran">
+          <h3>Pengeluaran Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranUmi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card full rekap-click" data-role="Umi" data-tipe="sisa">
+          <h3>Sisa Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaUmi)}</div>
+          <div class="rekap-sub">Pemasukan Umi - Pengeluaran Umi</div>
+        </div>
+      `;
+
+      // aktifkan klik ke halaman detail
+      const cards = document.querySelectorAll(".rekap-click");
+      cards.forEach(card => {
+        card.addEventListener("click", () => {
+          const role = card.dataset.role;
+          const tipe = card.dataset.tipe;
+          const bulan = bulanRekapEl.value;
+          window.location.href = `detail.html?role=${encodeURIComponent(role)}&tipe=${encodeURIComponent(tipe)}&bulan=${encodeURIComponent(bulan)}`;
+        });
+      });
+    }
+
+    btnRefresh.addEventListener("click", () => {
+      renderRekap();
+    });
+
+    async function downloadCSV(bulanKey, tipe) {
+      let query = supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey);
+
+      if (tipe === 'abi') {
+        query = query.eq('pelapor', 'Abi');
+      } else if (tipe === 'umi') {
+        query = query.eq('pelapor', 'Umi');
+      }
+
+      const { data, error } = await query.order('tanggal', { ascending: true });
+
+      if (error) {
+        console.error('Gagal ambil data untuk download:', error);
+        return;
+      }
+
+      const filtered = data || [];
+      const header = ["Tanggal", "Pelapor", "Jenis", "Rincian", "Jumlah"];
+      const rows = [header];
+
+      filtered.forEach(t => {
+        rows.push([
+          t.tanggal,
+          t.pelapor,
+          t.jenis,
+          (t.rincian || "").replace(/"/g, '""'),
+          t.jumlah,
+        ]);
+      });
+
+      const csvContent = rows
+        .map(r =>
+          r
+            .map(field => `"${String(field).replace(/"/g, '""')}"`)
+            .join(",")
+        )
+        .join("\r\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const labelTipe =
+        tipe === "abi" ? "Abi" :
+        tipe === "umi" ? "Umi" : "AbiUmi";
+
+      a.href = url;
+      a.download = `rekap-keuangan-${labelTipe}-${bulanKey}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    const downloadButtons = document.querySelectorAll("button[data-download]");
+    downloadButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tipe = btn.dataset.download;
+        const bulanKey = bulanRekapEl.value;
+        if (!bulanKey) return;
+        downloadCSV(bulanKey, tipe);
+      });
+    });
+
+    (async () => {
+      await loadAllTransaksi();
+      await renderRekap();
+    })();
+  </script>
+</body>
+</html>
+
+- mode detail.html juga tidak bisa akses data, cek kodenya:
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -147,13 +1138,8 @@
       width: 40px;
     }
 
-    /* Kolom jumlah dan sisa rata kanan */
     th:nth-child(4),
-    td:nth-child(4),
-    th:nth-child(5),
-    td:nth-child(5),
-    th:nth-child(6),
-    td:nth-child(6) {
+    td:nth-child(4) {
       text-align: right;
       min-width: 120px;
     }
@@ -214,7 +1200,7 @@
     <div class="table-wrapper">
       <table id="detailTable">
         <thead>
-          <tr id="theadRow">
+          <tr>
             <th>No</th>
             <th>Tanggal</th>
             <th>Rincian</th>
@@ -236,9 +1222,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Supabase config (sama dengan index.html)
-    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
+    // Sama seperti index.html: GANTI dengan Supabase kamu
+    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co'; // GANTI
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';                // GANTI
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     const params = new URLSearchParams(window.location.search);
@@ -246,14 +1232,13 @@
     const tipe = params.get('tipe');   // pemasukan / pengeluaran / sisa
     const bulanKey = params.get('bulan'); // YYYY-MM
 
-    const pageTitleEl    = document.getElementById("pageTitle");
-    const pageSubtitleEl = document.getElementById("pageSubtitle");
-    const tagRoleEl      = document.getElementById("tagRole");
-    const infoBulanEl    = document.getElementById("infoBulan");
-    const tbodyDetail    = document.getElementById("tbodyDetail");
-    const tfootDetail    = document.getElementById("tfootDetail");
-    const emptyStateEl   = document.getElementById("emptyState");
-    const theadRow       = document.getElementById("theadRow");
+    const pageTitleEl   = document.getElementById("pageTitle");
+    const pageSubtitleEl= document.getElementById("pageSubtitle");
+    const tagRoleEl     = document.getElementById("tagRole");
+    const infoBulanEl   = document.getElementById("infoBulan");
+    const tbodyDetail   = document.getElementById("tbodyDetail");
+    const tfootDetail   = document.getElementById("tfootDetail");
+    const emptyStateEl  = document.getElementById("emptyState");
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
@@ -291,7 +1276,7 @@
       } else if (tipe === "pengeluaran") {
         return "Menampilkan semua transaksi pengeluaran sesuai bulan yang dipilih.";
       } else if (tipe === "sisa") {
-        return "Menampilkan semua transaksi dan menghitung sisa (pemasukan - pengeluaran) sebagai saldo berjalan.";
+        return "Menampilkan semua transaksi dan menghitung sisa (pemasukan - pengeluaran).";
       }
       return "";
     }
@@ -304,32 +1289,11 @@
         return;
       }
 
-      // Atur judul & info
       pageTitleEl.textContent = tipeLabel(role, tipe);
       pageSubtitleEl.textContent = tipeSubtitle(tipe);
       tagRoleEl.textContent = `Pelapor: ${role}`;
       infoBulanEl.innerHTML = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
 
-      // Atur header tabel tergantung tipe
-      if (tipe === "sisa") {
-        theadRow.innerHTML = `
-          <th>No</th>
-          <th>Tanggal</th>
-          <th>Rincian</th>
-          <th>Jumlah Pemasukan (Rp)</th>
-          <th>Jumlah Pengeluaran (Rp)</th>
-          <th>Sisa (Rp)</th>
-        `;
-      } else {
-        theadRow.innerHTML = `
-          <th>No</th>
-          <th>Tanggal</th>
-          <th>Rincian</th>
-          <th>Jumlah (Rp)</th>
-        `;
-      }
-
-      // Query dasar
       let query = supabase
         .from('transaksi_keuangan')
         .select('*')
@@ -340,7 +1304,7 @@
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
         query = query.eq('jenis', tipe);
       }
-      // tipe 'sisa' → ambil semua jenis, nanti dipisah pemasukan/pengeluaran
+      // tipe 'sisa' → ambil semua jenis, hitung sisa di bawah
 
       const { data, error } = await query.order('tanggal', { ascending: true });
 
@@ -362,86 +1326,54 @@
 
       emptyStateEl.style.display = "none";
 
-      // === MODE PENERIMAAN / PENGELUARAN BIASA (4 kolom) ===
-      if (tipe === "pemasukan" || tipe === "pengeluaran") {
-        let htmlBody = "";
-        let total = 0;
+      let htmlBody = "";
+      let total = 0;
+      let totalPemasukan = 0;
+      let totalPengeluaran = 0;
 
-        rows.forEach((t, idx) => {
-          const jumlah = Number(t.jumlah || 0);
-          total += jumlah;
+      rows.forEach((t, idx) => {
+        const jumlah = Number(t.jumlah || 0);
+        total += jumlah;
+        if (t.jenis === "pemasukan") totalPemasukan += jumlah;
+        if (t.jenis === "pengeluaran") totalPengeluaran += jumlah;
 
-          htmlBody += `
-            <tr>
-              <td>${idx + 1}</td>
-              <td>${t.tanggal}</td>
-              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
-              <td>${formatRupiah(jumlah)}</td>
-            </tr>
-          `;
-        });
-
-        tbodyDetail.innerHTML = htmlBody;
-
-        const labelTotal = tipe === "pemasukan" ? "Total pemasukan" : "Total pengeluaran";
-
-        tfootDetail.innerHTML = `
+        htmlBody += `
           <tr>
-            <td></td>
-            <td></td>
-            <td>${labelTotal}</td>
-            <td>${formatRupiah(total)}</td>
+            <td>${idx + 1}</td>
+            <td>${t.tanggal}</td>
+            <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+            <td>${formatRupiah(jumlah)}</td>
           </tr>
         `;
-      } else {
-        // === MODE SISA: 6 kolom, saldo berjalan ===
-        let htmlBody = "";
-        let runningSisa = 0;
-        let totalPemasukan = 0;
-        let totalPengeluaran = 0;
+      });
 
-        rows.forEach((t, idx) => {
-          const jumlah = Number(t.jumlah || 0);
-          let valPemasukan = "";
-          let valPengeluaran = "";
+      tbodyDetail.innerHTML = htmlBody;
 
-          if (t.jenis === "pemasukan") {
-            runningSisa += jumlah;
-            totalPemasukan += jumlah;
-            valPemasukan = formatRupiah(jumlah);
-          } else if (t.jenis === "pengeluaran") {
-            runningSisa -= jumlah;
-            totalPengeluaran += jumlah;
-            valPengeluaran = formatRupiah(jumlah);
-          }
+      // Baris total
+      let labelTotal = "Total";
+      let nilaiTotal = total;
 
-          htmlBody += `
-            <tr>
-              <td>${idx + 1}</td>
-              <td>${t.tanggal}</td>
-              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
-              <td>${valPemasukan}</td>
-              <td>${valPengeluaran}</td>
-              <td>${formatRupiah(runningSisa)}</td>
-            </tr>
-          `;
-        });
-
-        tbodyDetail.innerHTML = htmlBody;
-
-        tfootDetail.innerHTML = `
-          <tr>
-            <td></td>
-            <td></td>
-            <td>Total sisa (pemasukan - pengeluaran)</td>
-            <td>${formatRupiah(totalPemasukan)}</td>
-            <td>${formatRupiah(totalPengeluaran)}</td>
-            <td>${formatRupiah(runningSisa)}</td>
-          </tr>
-        `;
+      if (tipe === "pemasukan") {
+        labelTotal = "Total pemasukan";
+        nilaiTotal = total; // sudah hanya pemasukan yg diambil
+      } else if (tipe === "pengeluaran") {
+        labelTotal = "Total pengeluaran";
+        nilaiTotal = total;
+      } else if (tipe === "sisa") {
+        labelTotal = "Total sisa (pemasukan - pengeluaran)";
+        nilaiTotal = totalPemasukan - totalPengeluaran;
       }
 
-      // Badge tipe di subtitle
+      tfootDetail.innerHTML = `
+        <tr>
+          <td></td>
+          <td></td>
+          <td>${labelTotal}</td>
+          <td>${formatRupiah(nilaiTotal)}</td>
+        </tr>
+      `;
+
+      // Badge tipe
       const badgeSpan = document.createElement("span");
       badgeSpan.className = "badge-type" + (tipe === "sisa" ? " sisa" : "");
       badgeSpan.textContent = tipe.toUpperCase();
@@ -453,3 +1385,5 @@
   </script>
 </body>
 </html>
+
+- tombol "terapkan" ukurannya harus sama dengan "pilih bulan & tahun"
