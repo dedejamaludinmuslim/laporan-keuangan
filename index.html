@@ -36,7 +36,7 @@
     /* CONTAINER APP: FULL WIDTH DI HP, TENGAH DI DESKTOP */
     .app {
       width: 100%;
-      max-width: 720px;      /* supaya di desktop tidak terlalu lebar */
+      max-width: 720px;
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.94);
       box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
@@ -249,51 +249,13 @@
       box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
     }
 
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
+    .error {
+      font-size: 0.8rem;
+      color: var(--red);
+      margin-top: 6px;
     }
 
-    .rekap-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .rekap-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    .rekap-card {
-      border-radius: var(--radius-lg);
-      padding: 8px 10px;
-      background: linear-gradient(135deg, var(--purple-soft), var(--white));
-      border: 1px solid rgba(129, 140, 248, 0.25);
-    }
-
-    .rekap-card h3 {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--gray);
-      margin-bottom: 2px;
-    }
-
-    .rekap-value {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--dark);
-    }
-
-    .rekap-sub {
-      font-size: 0.7rem;
-      color: var(--gray);
-      margin-top: 2px;
-    }
+    /* REKAP STYLING BARU */
 
     .top-summarizer {
       display: flex;
@@ -330,10 +292,69 @@
       color: var(--gray);
     }
 
-    .error {
+    .rekap-section {
+      margin-top: 10px;
+    }
+
+    .rekap-title {
       font-size: 0.8rem;
-      color: var(--red);
-      margin-top: 6px;
+      font-weight: 700;
+      margin: 4px 2px 6px;
+      color: var(--dark);
+    }
+
+    .rekap-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 420px) {
+      .rekap-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .rekap-card {
+      border-radius: var(--radius-lg);
+      padding: 8px 10px;
+      background: linear-gradient(135deg, var(--purple-soft), var(--white));
+      border: 1px solid rgba(129, 140, 248, 0.25);
+    }
+
+    .rekap-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .rekap-card h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 2px;
+    }
+
+    .rekap-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .rekap-sub {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-download-all {
+      grid-column: 1 / -1;
+      justify-content: center;
     }
   </style>
 </head>
@@ -436,20 +457,36 @@
           </div>
         </div>
 
-        <div class="rekap-grid" id="rekap-grid">
-          <!-- Diisi via JavaScript -->
+        <!-- REKAP ABI -->
+        <div class="rekap-section">
+          <div class="rekap-title">Rekap laporan Abi</div>
+          <div class="rekap-grid-2" id="rekap-abi-grid">
+            <!-- Isi lewat JavaScript -->
+          </div>
         </div>
 
-        <div class="btn-row">
-          <button class="btn-ghost" data-download="abi">
-            Download Rekap Abi ⬇️
-          </button>
-          <button class="btn-ghost" data-download="umi">
-            Download Rekap Umi ⬇️
-          </button>
-          <button class="btn-ghost" data-download="all">
-            Download Rekap Abi &amp; Umi ⬇️
-          </button>
+        <!-- REKAP UMI -->
+        <div class="rekap-section">
+          <div class="rekap-title">Rekap laporan Umi</div>
+          <div class="rekap-grid-2" id="rekap-umi-grid">
+            <!-- Isi lewat JavaScript -->
+          </div>
+        </div>
+
+        <!-- DOWNLOAD REKAP -->
+        <div class="rekap-section">
+          <div class="rekap-title">Download rekap</div>
+          <div class="download-grid">
+            <button class="btn-ghost" data-download="abi">
+              Download rekap laporan Abi ⬇️
+            </button>
+            <button class="btn-ghost" data-download="umi">
+              Download rekap laporan Umi ⬇️
+            </button>
+            <button class="btn-ghost btn-download-all" data-download="all">
+              Download rekap laporan Abi &amp; Umi ⬇️
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -570,7 +607,8 @@
 
     // REKAP
     const bulanRekapEl = document.getElementById("bulanRekap");
-    const rekapGrid = document.getElementById("rekap-grid");
+    const abiGrid = document.getElementById("rekap-abi-grid");
+    const umiGrid = document.getElementById("rekap-umi-grid");
     const btnRefresh = document.getElementById("btnRefreshRekap");
     const downloadButtons = document.querySelectorAll("button[data-download]");
 
@@ -612,30 +650,44 @@
       if (!bulanKey) return;
 
       const r = hitungRekap(bulanKey);
-      rekapGrid.innerHTML = "";
 
-      const items = [
-        { label: "Pemasukan Abi", value: r.pemasukanAbi, sub: "Total pemasukan yang dilaporkan Abi" },
-        { label: "Pengeluaran Abi", value: r.pengeluaranAbi, sub: "Total pengeluaran yang dilaporkan Abi" },
-        { label: "Sisa Abi", value: r.sisaAbi, sub: "Pemasukan Abi - Pengeluaran Abi" },
-        { label: "Pemasukan Umi", value: r.pemasukanUmi, sub: "Total pemasukan yang dilaporkan Umi" },
-        { label: "Pengeluaran Umi", value: r.pengeluaranUmi, sub: "Total pengeluaran yang dilaporkan Umi" },
-        { label: "Sisa Umi", value: r.sisaUmi, sub: "Pemasukan Umi - Pengeluaran Umi" },
-        { label: "Pemasukan Abi & Umi", value: r.pemasukanAll, sub: "Gabungan seluruh pemasukan" },
-        { label: "Pengeluaran Abi & Umi", value: r.pengeluaranAll, sub: "Gabungan seluruh pengeluaran" },
-        { label: "Sisa Abi & Umi", value: r.sisaAll, sub: "Pemasukan gabungan - Pengeluaran gabungan" },
-      ];
+      // Isi grid Abi
+      abiGrid.innerHTML = `
+        <div class="rekap-card">
+          <h3>Pemasukan Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanAbi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card">
+          <h3>Pengeluaran Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranAbi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card full">
+          <h3>Sisa Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaAbi)}</div>
+          <div class="rekap-sub">Pemasukan Abi - Pengeluaran Abi</div>
+        </div>
+      `;
 
-      for (const item of items) {
-        const card = document.createElement("div");
-        card.className = "rekap-card";
-        card.innerHTML = `
-          <h3>${item.label}</h3>
-          <div class="rekap-value">${formatRupiah(item.value)}</div>
-          <div class="rekap-sub">${item.sub}</div>
-        `;
-        rekapGrid.appendChild(card);
-      }
+      // Isi grid Umi
+      umiGrid.innerHTML = `
+        <div class="rekap-card">
+          <h3>Pemasukan Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanUmi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card">
+          <h3>Pengeluaran Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranUmi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card full">
+          <h3>Sisa Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaUmi)}</div>
+          <div class="rekap-sub">Pemasukan Umi - Pengeluaran Umi</div>
+        </div>
+      `;
     }
 
     btnRefresh.addEventListener("click", () => {
