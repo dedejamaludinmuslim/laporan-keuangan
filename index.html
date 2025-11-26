@@ -663,15 +663,41 @@
 
     const tabs = document.querySelectorAll(".tab");
     const panels = document.querySelectorAll(".tab-panel");
-
+    
+    // Fungsi umum untuk ganti tab
+    function switchTab(name) {
+      tabs.forEach(t => {
+        const isActive = t.dataset.tab === name;
+        t.classList.toggle("active", isActive);
+      });
+      panels.forEach(p => {
+        p.style.display = (p.id === `tab-${name}`) ? "block" : "none";
+      });
+    }
+    
+    // Klik tab manual
     tabs.forEach(tab => {
       tab.addEventListener("click", () => {
         const target = tab.dataset.tab;
-        tabs.forEach(t => t.classList.toggle("active", t === tab));
-        panels.forEach(p => p.style.display = p.id === `tab-${target}` ? "block" : "none");
+        switchTab(target);
+    
+        // Update hash di URL (optional, biar konsisten)
+        if (history.replaceState) {
+          const url = new URL(window.location);
+          url.hash = (target === "rekap") ? "#rekap" : "";
+          history.replaceState(null, "", url);
+        }
       });
     });
-
+    
+    // Tentukan tab awal saat halaman dibuka
+    (function initTabFromUrl() {
+      const hash = window.location.hash;
+      const initialTab = (hash === "#rekap") ? "rekap" : "input";
+      switchTab(initialTab);
+    })();
+    
+       
     const form = document.getElementById("form-laporan");
     const jenisEl = document.getElementById("jenis");
     const pelaporEl = document.getElementById("pelapor");
