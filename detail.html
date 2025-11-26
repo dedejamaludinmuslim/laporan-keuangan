@@ -382,7 +382,7 @@
           <span>💾</span>
         </button>
         <div class="edit-hint" id="editHint">
-          Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
+          Tekan nominal jumlah atau rincian di tabel untuk mengubah, lalu simpan revisi.
         </div>
       </div>
     </div>
@@ -430,8 +430,30 @@
     const chartBarListEl  = document.getElementById("chartBarList");
     const chartEmptyEl    = document.getElementById("chartEmpty");
 
-    // Map id_transaksi -> jumlah_baru
+    // Map id_transaksi -> { jumlah: number|null, rincian: string|null }
     const pendingEdits = new Map();
+
+    function getEditRecord(id) {
+      if (!pendingEdits.has(id)) {
+        pendingEdits.set(id, { jumlah: null, rincian: null });
+      }
+      return pendingEdits.get(id);
+    }
+
+    function hasAnyChanges() {
+      for (const rec of pendingEdits.values()) {
+        if (rec.jumlah !== null || rec.rincian !== null) return true;
+      }
+      return false;
+    }
+
+    function cleanEmptyEdits() {
+      for (const [id, rec] of pendingEdits.entries()) {
+        if (rec.jumlah === null && rec.rincian === null) {
+          pendingEdits.delete(id);
+        }
+      }
+    }
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
@@ -475,16 +497,17 @@
     }
 
     function updateEditHint() {
-      const hasEdits = pendingEdits.size > 0;
+      cleanEmptyEdits();
+      const hasEdits = hasAnyChanges();
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan" untuk mengupdate data.';
+        editHint.textContent = 'Ada revisi yang belum disimpan. Klik "Simpan" untuk mengupdate data.';
       } else {
-        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
+        editHint.textContent = 'Tekan nominal jumlah atau rincian di tabel untuk mengubah, lalu simpan revisi.';
       }
     }
 
-    function attachEditListeners() {
+    function attachAmountEditListeners() {
       const cells = document.querySelectorAll(".editable-amount");
       cells.forEach(cell => {
         cell.addEventListener("click", () => {
@@ -492,9 +515,9 @@
 
           const id = cell.dataset.id;
           const original = Number(cell.dataset.original || 0);
-          const currentValue = pendingEdits.has(id)
-            ? pendingEdits.get(id)
-            : original;
+
+          const rec = getEditRecord(id);
+          const currentValue = rec.jumlah !== null ? rec.jumlah : original;
 
           cell.dataset.editing = "true";
 
@@ -515,17 +538,18 @@
             cell.dataset.editing = "false";
 
             if (commit && !isNaN(raw) && raw >= 0 && raw !== original) {
-              pendingEdits.set(id, raw);
+              const rec = getEditRecord(id);
+              rec.jumlah = raw;
               cell.innerHTML = formatRupiah(raw);
               cell.classList.add("edited-cell");
             } else {
-              if (pendingEdits.has(id) && (isNaN(raw) || raw === original)) {
-                pendingEdits.delete(id);
+              const rec = getEditRecord(id);
+              if (!isNaN(raw) && raw === original) {
+                rec.jumlah = null;
               }
-              cell.innerHTML = formatRupiah(
-                pendingEdits.has(id) ? pendingEdits.get(id) : original
-              );
-              if (!pendingEdits.has(id)) {
+              const display = rec.jumlah !== null ? rec.jumlah : original;
+              cell.innerHTML = formatRupiah(display);
+              if (rec.jumlah === null) {
                 cell.classList.remove("edited-cell");
               }
             }
@@ -539,9 +563,9 @@
               input.blur();
             } else if (e.key === "Escape") {
               cell.dataset.editing = "false";
-              cell.innerHTML = formatRupiah(
-                pendingEdits.has(id) ? pendingEdits.get(id) : original
-              );
+              const rec = getEditRecord(id);
+              const display = rec.jumlah !== null ? rec.jumlah : original;
+              cell.innerHTML = formatRupiah(display);
             }
           });
 
@@ -553,6 +577,79 @@
       });
     }
 
+    function attachRincianEditListeners() {
+      const cells = document.querySelectorAll(".editable-rincian");
+      cells.forEach(cell => {
+        cell.addEventListener("click", () => {
+          if (cell.dataset.editing === "true") return;
+
+          const id = cell.dataset.id;
+          const original = cell.dataset.original || "";
+
+          const rec = getEditRecord(id);
+          const currentValue = rec.rincian !== null ? rec.rincian : original;
+
+          cell.dataset.editing = "true";
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = currentValue;
+          input.style.width = "100%";
+          input.style.boxSizing = "border-box";
+          input.style.fontSize = "0.8rem";
+          input.style.padding = "4px 6px";
+
+          input.addEventListener("click", (e) => e.stopPropagation());
+
+          const finishEdit = (commit) => {
+            const raw = (input.value || "").trim();
+            cell.dataset.editing = "false";
+
+            if (commit && raw !== "" && raw !== original) {
+              const rec = getEditRecord(id);
+              rec.rincian = raw;
+              cell.textContent = raw;
+              cell.classList.add("edited-cell");
+            } else {
+              const rec = getEditRecord(id);
+              if (raw === original) {
+                rec.rincian = null;
+              }
+              const display = rec.rincian !== null ? rec.rincian : original;
+              cell.textContent = display;
+              if (rec.rincian === null) {
+                cell.classList.remove("edited-cell");
+              }
+            }
+            updateEditHint();
+          };
+
+          input.addEventListener("blur", () => finishEdit(true));
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              input.blur();
+            } else if (e.key === "Escape") {
+              cell.dataset.editing = "false";
+              const rec = getEditRecord(id);
+              const display = rec.rincian !== null ? rec.rincian : original;
+              cell.textContent = display;
+            }
+          });
+
+          cell.innerHTML = "";
+          cell.appendChild(input);
+          input.focus();
+          input.select();
+        });
+      });
+    }
+
+    function attachEditListeners() {
+      attachAmountEditListeners();
+      attachRincianEditListeners();
+    }
+
     function renderRincianChart(rows, tipe) {
       // Tidak ada chart untuk tipe "sisa"
       if (tipe === "sisa") {
@@ -562,6 +659,7 @@
 
       chartCardEl.style.display = "block";
       chartBarListEl.innerHTML = "";
+      chartEmptyEl.style.display = "false";
       chartEmptyEl.style.display = "none";
       chartSubtitleEl.textContent = "";
 
@@ -721,12 +819,15 @@
         rows.forEach((t, idx) => {
           const jumlah = Number(t.jumlah || 0);
           total += jumlah;
+          const safeRincian = (t.rincian || "").replace(/</g, "&lt;");
 
           htmlBody += `
             <tr>
               <td>${idx + 1}</td>
               <td>${t.tanggal}</td>
-              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+              <td class="editable-rincian" data-id="${t.id}" data-original="${safeRincian}">
+                ${safeRincian}
+              </td>
               <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
                 ${formatRupiah(jumlah)}
               </td>
@@ -755,6 +856,7 @@
 
         rows.forEach((t, idx) => {
           const jumlah = Number(t.jumlah || 0);
+          const safeRincian = (t.rincian || "").replace(/</g, "&lt;");
           let cellPemasukan = "";
           let cellPengeluaran = "";
 
@@ -785,7 +887,9 @@
             <tr>
               <td>${idx + 1}</td>
               <td>${t.tanggal}</td>
-              <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
+              <td class="editable-rincian" data-id="${t.id}" data-original="${safeRincian}">
+                ${safeRincian}
+              </td>
               ${cellPemasukan}
               ${cellPengeluaran}
               <td>${formatRupiah(runningSisa)}</td>
@@ -813,15 +917,22 @@
     }
 
     btnSaveEdits.addEventListener("click", async () => {
-      if (pendingEdits.size === 0) return;
+      cleanEmptyEdits();
+      if (!hasAnyChanges()) return;
 
       btnSaveEdits.disabled = true;
       editHint.textContent = "Menyimpan revisi ke server...";
 
-      for (const [id, newJumlah] of pendingEdits.entries()) {
+      for (const [id, rec] of pendingEdits.entries()) {
+        const updateObj = {};
+        if (rec.jumlah !== null)  updateObj.jumlah  = rec.jumlah;
+        if (rec.rincian !== null) updateObj.rincian = rec.rincian;
+
+        if (Object.keys(updateObj).length === 0) continue;
+
         const { error } = await supabase
           .from('transaksi_keuangan')
-          .update({ jumlah: newJumlah })
+          .update(updateObj)
           .eq('id', id);
 
         if (error) {
@@ -830,8 +941,9 @@
         }
       }
 
+      pendingEdits.clear();
       await loadDetail();
-      alert("Revisi nominal berhasil disimpan.");
+      alert("Revisi berhasil disimpan.");
     });
 
     loadDetail();
