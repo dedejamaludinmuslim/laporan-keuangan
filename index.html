@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aplikasi Laporan Keuangan Rumah Tangga</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --purple-soft: #ede9fe;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --white: #ffffff;
+      --dark: #0f172a;
+      --gray-soft: #f3f4f6;
+      --gray: #6b7280;
+      --red: #ef4444;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--purple-soft), var(--blue-soft));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: var(--dark);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1040px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+      border-radius: 28px;
+      padding: 24px 24px 32px;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding: 28px 32px 36px;
+      }
+    }
+
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .title-group h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .title-group p {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: var(--gray-soft);
+      padding: 4px;
+      border-radius: 999px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray);
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: var(--white);
+      box-shadow: 0 8px 16px rgba(79, 70, 229, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .content {
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 18px 18px 20px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title span.dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px 16px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      background: #f9fafb;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input[type="file"] {
+      font-size: 0.8rem;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: var(--white);
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: var(--gray);
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, box-shadow 0.1s, opacity 0.1s;
+      margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.32);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(219, 234, 254, 0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .rekap-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .rekap-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .rekap-card {
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      background: linear-gradient(135deg, var(--purple-soft), var(--white));
+      border: 1px solid rgba(129, 140, 248, 0.25);
+    }
+
+    .rekap-card h3 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 3px;
+    }
+
+    .rekap-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .rekap-sub {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--blue);
+      margin-left: 4px;
+    }
+
+    .top-summarizer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .top-summarizer small {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--gray);
+    }
+
+    .error {
+      font-size: 0.8rem;
+      color: var(--red);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title-group">
+        <h1>Laporan Keuangan Rumah Tangga</h1>
+        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar sederhana.</p>
+      </div>
+      <span class="badge">Family Finance • Abi &amp; Umi</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="input">Input Laporan</button>
+      <button class="tab" data-tab="rekap">Rekap Bulanan</button>
+    </div>
+
+    <div class="content">
+      <!-- TAB INPUT -->
+      <div class="card tab-panel" id="tab-input">
+        <div class="section-title">
+          <span class="dot"></span>
+          <span>Input Laporan Keuangan</span>
+        </div>
+        <form id="form-laporan">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tanggal">Tanggal</label>
+              <input type="date" id="tanggal" required />
+            </div>
+
+            <div class="form-group">
+              <label for="pelapor">Siapa yang laporan?</label>
+              <select id="pelapor" required>
+                <option value="">Pilih pelapor</option>
+                <option value="Abi">Abi</option>
+                <option value="Umi">Umi</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="jenis">Jenis laporan</label>
+              <select id="jenis" required>
+                <option value="">Pilih jenis</option>
+                <option value="pemasukan">Pemasukan</option>
+                <option value="pengeluaran">Pengeluaran</option>
+              </select>
+              <small class="hint">Tipe laporan akan mempengaruhi rekomendasi rincian.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="rincian">Rincian laporan</label>
+              <input type="text" id="rincian" list="rincianList" placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
+              <datalist id="rincianList"></datalist>
+              <small class="hint">Ketik beberapa huruf, sistem akan menampilkan rincian yang pernah dipakai.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="jumlah">Jumlah (Rp)</label>
+              <input type="number" id="jumlah" min="0" step="1000" placeholder="misal: 500000" required />
+            </div>
+
+            <div class="form-group full">
+              <label for="revisi">Revisi laporan (opsional)</label>
+              <input type="file" id="revisi" />
+              <small class="hint">
+                Template revisi bisa diambil dari file yang di-download di menu Rekap Bulanan.
+                (Di versi produksi, file ini sebaiknya disimpan di server / cloud.)
+              </small>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            Simpan Laporan
+            <span>💾</span>
+          </button>
+          <div id="error-msg" class="error" style="display: none;"></div>
+        </form>
+      </div>
+
+      <!-- TAB REKAP -->
+      <div class="card tab-panel" id="tab-rekap" style="display: none;">
+        <div class="section-title">
+          <span class="dot"></span>
+          <span>Rekap Laporan Bulanan</span>
+        </div>
+
+        <div class="top-summarizer">
+          <div>
+            <small>Pilih bulan &amp; tahun untuk melihat ringkasan:</small>
+            <div class="pill-row">
+              <span class="pill">Pemasukan vs Pengeluaran</span>
+              <span class="pill">Abi • Umi • Gabungan</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <input type="month" id="bulanRekap" />
+            <button class="btn-ghost" id="btnRefreshRekap">Terapkan</button>
+          </div>
+        </div>
+
+        <div class="rekap-grid" id="rekap-grid">
+          <!-- Diisi via JavaScript -->
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-ghost" data-download="abi">
+            Download Rekap Abi ⬇️
+          </button>
+          <button class="btn-ghost" data-download="umi">
+            Download Rekap Umi ⬇️
+          </button>
+          <button class="btn-ghost" data-download="all">
+            Download Rekap Abi &amp; Umi ⬇️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ------- UTILITAS DASAR -------
+    const STORAGE_KEY = "laporanKeuanganKeluarga";
+
+    function loadTransaksi() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveTransaksi(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function formatRupiah(angka) {
+      const n = Number(angka) || 0;
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+      }).format(n);
+    }
+
+    function getMonthKey(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return null;
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    // ------- TAB HANDLING -------
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.tab;
+        tabs.forEach(t => t.classList.toggle("active", t === tab));
+        panels.forEach(p => p.style.display = p.id === `tab-${target}` ? "block" : "none");
+      });
+    });
+
+    // ------- INPUT FORM -------
+    const form = document.getElementById("form-laporan");
+    const jenisEl = document.getElementById("jenis");
+    const rincianEl = document.getElementById("rincian");
+    const rincianListEl = document.getElementById("rincianList");
+    const errorMsg = document.getElementById("error-msg");
+
+    let transaksi = loadTransaksi();
+
+    function refreshRincianDatalist() {
+      const jenis = jenisEl.value;
+      rincianListEl.innerHTML = "";
+      if (!jenis) return;
+
+      const setRincian = new Set(
+        transaksi
+          .filter(t => t.jenis === jenis)
+          .map(t => t.rincian.trim())
+          .filter(Boolean)
+      );
+
+      for (const r of setRincian) {
+        const opt = document.createElement("option");
+        opt.value = r;
+        rincianListEl.appendChild(opt);
+      }
+    }
+
+    jenisEl.addEventListener("change", refreshRincianDatalist);
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      errorMsg.style.display = "none";
+
+      const tanggal = document.getElementById("tanggal").value;
+      const pelapor = document.getElementById("pelapor").value;
+      const jenis = document.getElementById("jenis").value;
+      const rincian = rincianEl.value.trim();
+      const jumlah = Number(document.getElementById("jumlah").value || 0);
+      const revisiInput = document.getElementById("revisi");
+
+      if (!tanggal || !pelapor || !jenis || !rincian || !jumlah) {
+        errorMsg.textContent = "Mohon lengkapi semua field wajib dan pastikan jumlah > 0.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      // Di sini bisa upload revisi ke server (jika ada backend)
+      const revisiNamaFile = revisiInput.files[0]?.name || null;
+
+      const newItem = {
+        id: Date.now(),
+        tanggal,
+        bulanKey: getMonthKey(tanggal),
+        pelapor,           // Abi / Umi
+        jenis,             // pemasukan / pengeluaran
+        rincian,
+        jumlah,
+        revisiNamaFile,    // hanya nama file untuk contoh
+        createdAt: new Date().toISOString(),
+      };
+
+      transaksi.push(newItem);
+      saveTransaksi(transaksi);
+      refreshRincianDatalist();
+      form.reset();
+      alert("Laporan keuangan berhasil disimpan.");
+    });
+
+    // ------- REKAP BULANAN -------
+    const bulanRekapEl = document.getElementById("bulanRekap");
+    const rekapGrid = document.getElementById("rekap-grid");
+    const btnRefresh = document.getElementById("btnRefreshRekap");
+    const downloadButtons = document.querySelectorAll("button[data-download]");
+
+    // Set default month = bulan sekarang
+    (function setDefaultMonth() {
+      const now = new Date();
+      const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      bulanRekapEl.value = key;
+    })();
+
+    function hitungRekap(bulanKey) {
+      const dataBulan = transaksi.filter(t => t.bulanKey === bulanKey);
+
+      const sum = (filterFn) =>
+        dataBulan.filter(filterFn).reduce((acc, cur) => acc + Number(cur.jumlah || 0), 0);
+
+      const pemasukanAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pemasukan");
+      const pengeluaranAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pengeluaran");
+      const pemasukanUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pemasukan");
+      const pengeluaranUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pengeluaran");
+
+      const pemasukanAll = pemasukanAbi + pemasukanUmi;
+      const pengeluaranAll = pengeluaranAbi + pengeluaranUmi;
+
+      return {
+        pemasukanAbi,
+        pengeluaranAbi,
+        sisaAbi: pemasukanAbi - pengeluaranAbi,
+        pemasukanUmi,
+        pengeluaranUmi,
+        sisaUmi: pemasukanUmi - pengeluaranUmi,
+        pemasukanAll,
+        pengeluaranAll,
+        sisaAll: pemasukanAll - pengeluaranAll,
+      };
+    }
+
+    function renderRekap() {
+      const bulanKey = bulanRekapEl.value;
+      if (!bulanKey) return;
+
+      const r = hitungRekap(bulanKey);
+      rekapGrid.innerHTML = "";
+
+      const items = [
+        { label: "Pemasukan Abi", value: r.pemasukanAbi, sub: "Total pemasukan yang dilaporkan Abi" },
+        { label: "Pengeluaran Abi", value: r.pengeluaranAbi, sub: "Total pengeluaran yang dilaporkan Abi" },
+        { label: "Sisa Abi", value: r.sisaAbi, sub: "Pemasukan Abi - Pengeluaran Abi" },
+        { label: "Pemasukan Umi", value: r.pemasukanUmi, sub: "Total pemasukan yang dilaporkan Umi" },
+        { label: "Pengeluaran Umi", value: r.pengeluaranUmi, sub: "Total pengeluaran yang dilaporkan Umi" },
+        { label: "Sisa Umi", value: r.sisaUmi, sub: "Pemasukan Umi - Pengeluaran Umi" },
+        { label: "Pemasukan Abi & Umi", value: r.pemasukanAll, sub: "Gabungan seluruh pemasukan" },
+        { label: "Pengeluaran Abi & Umi", value: r.pengeluaranAll, sub: "Gabungan seluruh pengeluaran" },
+        { label: "Sisa Abi & Umi", value: r.sisaAll, sub: "Pemasukan gabungan - Pengeluaran gabungan" },
+      ];
+
+      for (const item of items) {
+        const card = document.createElement("div");
+        card.className = "rekap-card";
+        card.innerHTML = `
+          <h3>${item.label}</h3>
+          <div class="rekap-value">${formatRupiah(item.value)}</div>
+          <div class="rekap-sub">${item.sub}</div>
+        `;
+        rekapGrid.appendChild(card);
+      }
+    }
+
+    btnRefresh.addEventListener("click", () => {
+      renderRekap();
+    });
+
+    // Auto-render pertama kali
+    renderRekap();
+
+    // ------- DOWNLOAD REKAP (CSV) -------
+    function downloadCSV(bulanKey, tipe) {
+      const dataBulan = transaksi.filter(t => t.bulanKey === bulanKey);
+
+      let filtered;
+      if (tipe === "abi") {
+        filtered = dataBulan.filter(t => t.pelapor === "Abi");
+      } else if (tipe === "umi") {
+        filtered = dataBulan.filter(t => t.pelapor === "Umi");
+      } else {
+        filtered = dataBulan; // all
+      }
+
+      const header = ["Tanggal", "Pelapor", "Jenis", "Rincian", "Jumlah"];
+      const rows = [header];
+
+      filtered.forEach(t => {
+        rows.push([
+          t.tanggal,
+          t.pelapor,
+          t.jenis,
+          t.rincian.replace(/"/g, '""'),
+          t.jumlah,
+        ]);
+      });
+
+      const csvContent = rows
+        .map(r =>
+          r
+            .map(field => `"${String(field).replace(/"/g, '""')}"`)
+            .join(",")
+        )
+        .join("\r\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const labelTipe =
+        tipe === "abi" ? "Abi" :
+        tipe === "umi" ? "Umi" : "AbiUmi";
+
+      a.href = url;
+      a.download = `rekap-keuangan-${labelTipe}-${bulanKey}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    downloadButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tipe = btn.dataset.download;
+        const bulanKey = bulanRekapEl.value;
+        if (!bulanKey) return;
+        downloadCSV(bulanKey, tipe);
+      });
+    });
+  </script>
+</body>
+</html>
