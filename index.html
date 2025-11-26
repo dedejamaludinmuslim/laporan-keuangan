@@ -597,6 +597,18 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+  // GANTI dengan URL & anon key project kamu
+  const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  // ...lanjutan script yang lain di bawah
+  </script>
+
   <script>
     const STORAGE_KEY = "laporanKeuanganKeluarga";
 
