@@ -49,42 +49,13 @@
       }
     }
 
-      .header {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      
-      /* baris badge: brand kiri, pelapor kanan */
-      .badge-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-      
-      .badge-brand,
-      .badge-role {
-        padding: 4px 10px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-      
-      /* brand (Abi & Umi Finance) */
-      .badge-brand {
-        background: var(--purple-soft);
-        color: var(--purple);
-      }
-      
-      /* pelapor: Abi / Umi */
-      .badge-role {
-        background: var(--blue-soft);
-        color: var(--blue);
-      }
+    /* HEADER */
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
 
     .title-block {
       padding: 14px 12px;
@@ -92,21 +63,49 @@
       background: linear-gradient(135deg, var(--purple), var(--blue));
       text-align: center;
       color: #ffffff;
-      flex: 1 1 auto;
     }
 
     .title {
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: #ffffff;
     }
 
     .subtitle {
-      font-size: 0.85rem;
-      color: #f3f4f6;
+      font-size: 0.8rem;
+      color: #e5e7eb;
       margin-top: 4px;
     }
 
+    .badge-row {
+      display: flex;
+      justify-content: space-between; /* brand kiri, pelapor kanan */
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .badge-brand,
+    .badge-role {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-brand {
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
+    .badge-role {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    /* BACK ROW */
     .back-row {
       display: flex;
       justify-content: space-between;
@@ -131,7 +130,7 @@
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
       transition: background 0.1s, transform 0.1s, box-shadow 0.1s, opacity 0.1s;
     }
-    
+
     .btn-back:hover {
       transform: translateY(-1px);
       box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
@@ -146,6 +145,7 @@
       color: var(--dark);
     }
 
+    /* TABEL */
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
@@ -175,7 +175,7 @@
       width: 40px;
     }
 
-    /* Kolom jumlah dan sisa rata kanan */
+    /* Kolom jumlah & sisa rata kanan */
     th:nth-child(4),
     td:nth-child(4),
     th:nth-child(5),
@@ -205,30 +205,14 @@
       padding: 12px 4px 4px;
     }
 
-    .badge-type {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      background: rgba(37, 99, 235, 0.08);
-      color: var(--blue);
-    }
-
-    .badge-type.sisa {
-      background: rgba(124, 58, 237, 0.08);
-      color: var(--purple);
-    }
-
-    /* Area tombol simpan revisi */
+    /* EDIT NOMINAL */
     .edit-actions {
-      margin-top: 10px;
+      margin-top: 12px;
     }
-    
+
     .btn-save-edit {
-      display: block;              /* biar bisa lebar penuh */
-      width: 100%;                 /* full lebar container */
+      display: block;
+      width: 100%;
       border-radius: 999px;
       border: none;
       padding: 9px 14px;
@@ -240,16 +224,6 @@
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
     }
 
-    .btn-save-edit:hover:enabled {
-      transform: translateY(-1px);
-      box-shadow: 0 11px 22px rgba(79, 70, 229, 0.4);
-    }
-
-    .btn-save-edit:active:enabled {
-      transform: translateY(0);
-      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.32);
-    }
-
     .btn-save-edit:disabled {
       opacity: 0.5;
       cursor: default;
@@ -259,16 +233,81 @@
     .edit-hint {
       font-size: 0.75rem;
       color: var(--gray);
-      text-align: center;
+      margin-top: 4px;
     }
 
     .edited-cell {
       background-color: rgba(199, 210, 254, 0.6);
     }
+
+    /* CHART RINCIAN */
+    .chart-section {
+      margin-top: 16px;
+    }
+
+    .chart-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .chart-subtitle {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+
+    .chart-bar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chart-bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chart-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--dark);
+      gap: 8px;
+    }
+
+    .chart-bar-label span:first-child {
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chart-bar-label span:last-child {
+      text-align: right;
+      color: var(--gray);
+    }
+
+    .chart-bar-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+    }
   </style>
 </head>
 <body>
   <div class="page">
+    <!-- HEADER -->
     <div class="header">
       <div class="title-block">
         <div class="title" id="pageTitle">Detail Laporan</div>
@@ -280,6 +319,7 @@
       </div>
     </div>
 
+    <!-- BACK ROW -->
     <div class="back-row">
       <button class="btn-back" type="button" onclick="window.location.href='index.html#rekap'">
         ← Kembali ke rekap bulanan
@@ -287,6 +327,7 @@
       <div class="info-label" id="infoBulan"></div>
     </div>
 
+    <!-- TABEL -->
     <div class="table-wrapper">
       <table id="detailTable">
         <thead>
@@ -309,10 +350,20 @@
       </div>
     </div>
 
+    <!-- CHART RINCIAN -->
+    <div class="chart-section">
+      <div class="chart-title" id="chartTitle">Diagram rincian</div>
+      <div class="chart-subtitle" id="chartSubtitle"></div>
+      <div id="chartBarList" class="chart-bar-list"></div>
+      <div class="empty-state" id="chartEmpty" style="display:none;">
+        Belum ada cukup data untuk menampilkan diagram rincian.
+      </div>
+    </div>
+
+    <!-- EDIT NOMINAL -->
     <div class="edit-actions">
       <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
-        Simpan
-        <span>💾</span>
+        Simpan revisi nominal
       </button>
       <div class="edit-hint" id="editHint">
         Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
@@ -342,6 +393,12 @@
     const theadRow       = document.getElementById("theadRow");
     const btnSaveEdits   = document.getElementById("btnSaveEdits");
     const editHint       = document.getElementById("editHint");
+
+    // chart elements
+    const chartTitleEl    = document.getElementById("chartTitle");
+    const chartSubtitleEl = document.getElementById("chartSubtitle");
+    const chartBarListEl  = document.getElementById("chartBarList");
+    const chartEmptyEl    = document.getElementById("chartEmpty");
 
     // Map id_transaksi -> jumlah_baru
     const pendingEdits = new Map();
@@ -391,7 +448,7 @@
       const hasEdits = pendingEdits.size > 0;
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan 💾" untuk mengupdate data.';
+        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan revisi nominal" untuk mengupdate data.';
       } else {
         editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
       }
@@ -466,25 +523,109 @@
       });
     }
 
+    function renderRincianChart(rows, tipe) {
+      chartBarListEl.innerHTML = "";
+      chartEmptyEl.style.display = "none";
+      chartSubtitleEl.textContent = "";
+
+      if (!rows || !rows.length) {
+        chartEmptyEl.style.display = "block";
+        return;
+      }
+
+      // Tentukan basis data chart:
+      // - pemasukan → breakdown pemasukan
+      // - pengeluaran → breakdown pengeluaran
+      // - sisa → fokus pengeluaran (sesuai permintaan: % terhadap pengeluaran)
+      let baseJenis = null;
+      if (tipe === "pemasukan") baseJenis = "pemasukan";
+      else if (tipe === "pengeluaran" || tipe === "sisa") baseJenis = "pengeluaran";
+
+      let filteredRows = rows;
+      if (baseJenis) {
+        filteredRows = rows.filter(r => r.jenis === baseJenis);
+      }
+
+      if (!filteredRows.length) {
+        chartEmptyEl.style.display = "block";
+        chartSubtitleEl.textContent = "Belum ada data yang sesuai untuk dihitung.";
+        return;
+      }
+
+      const mapStats = new Map();
+      let grandTotal = 0;
+
+      filteredRows.forEach(t => {
+        const rincian = (t.rincian || "Tanpa rincian").trim() || "Tanpa rincian";
+        const jumlah = Number(t.jumlah || 0);
+        grandTotal += jumlah;
+
+        if (!mapStats.has(rincian)) {
+          mapStats.set(rincian, { count: 0, total: 0 });
+        }
+        const obj = mapStats.get(rincian);
+        obj.count += 1;
+        obj.total += jumlah;
+      });
+
+      if (!grandTotal) {
+        chartEmptyEl.style.display = "block";
+        chartSubtitleEl.textContent = "Total nominal masih 0, belum bisa ditampilkan sebagai diagram.";
+        return;
+      }
+
+      const arr = Array.from(mapStats.entries()).map(([rincian, v]) => ({
+        rincian,
+        count: v.count,
+        total: v.total
+      }));
+
+      arr.sort((a, b) => b.total - a.total || b.count - a.count);
+
+      const top = arr.slice(0, 8); // batasi 8 rincian teratas
+      const maxTotal = Math.max(...top.map(x => x.total));
+
+      const jenisLabel = baseJenis === "pemasukan" ? "pemasukan" : "pengeluaran";
+      chartTitleEl.textContent = `Diagram rincian ${jenisLabel} terbanyak`;
+      chartSubtitleEl.textContent =
+        `Menampilkan rincian dengan total ${jenisLabel} terbesar pada bulan ini.`;
+
+      top.forEach(item => {
+        const percent = (item.total / grandTotal) * 100;
+        const widthPercent = maxTotal ? (item.total / maxTotal) * 100 : 0;
+
+        const row = document.createElement("div");
+        row.className = "chart-bar-row";
+        row.innerHTML = `
+          <div class="chart-bar-label">
+            <span>${item.rincian} (${item.count}x)</span>
+            <span>${formatRupiah(item.total)} · ${percent.toFixed(1)}%</span>
+          </div>
+          <div class="chart-bar-track">
+            <div class="chart-bar-fill" style="width:${widthPercent}%;"></div>
+          </div>
+        `;
+        chartBarListEl.appendChild(row);
+      });
+    }
+
     async function loadDetail() {
       if (!role || !tipe || !bulanKey) {
         pageTitleEl.textContent = "Filter tidak lengkap";
         emptyStateEl.textContent = "URL kurang lengkap. Pastikan membuka halaman ini lewat kotak rekap bulanan.";
         emptyStateEl.style.display = "block";
+        chartEmptyEl.style.display = "block";
         return;
       }
 
-      // reset state revisi
       pendingEdits.clear();
       updateEditHint();
 
-      // Atur judul & info
-      pageTitleEl.textContent = tipeLabel(role, tipe);
+      pageTitleEl.textContent   = tipeLabel(role, tipe);
       pageSubtitleEl.textContent = tipeSubtitle(tipe);
-      tagRoleEl.textContent = `Pelapor: ${role}`;
-      infoBulanEl.innerHTML = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
+      tagRoleEl.textContent     = `Pelapor: ${role}`;
+      infoBulanEl.innerHTML     = `<strong>Bulan:</strong> ${monthLabel(bulanKey)} &nbsp;·&nbsp; <strong>Kode:</strong> ${bulanKey}`;
 
-      // Atur header tabel tergantung tipe
       if (tipe === "sisa") {
         theadRow.innerHTML = `
           <th>No</th>
@@ -503,7 +644,6 @@
         `;
       }
 
-      // Query dasar
       let query = supabase
         .from('transaksi_keuangan')
         .select('*')
@@ -520,6 +660,7 @@
         console.error('Gagal load detail:', error);
         emptyStateEl.textContent = "Gagal memuat data dari server.";
         emptyStateEl.style.display = "block";
+        chartEmptyEl.style.display = "block";
         return;
       }
 
@@ -529,13 +670,13 @@
         tbodyDetail.innerHTML = "";
         tfootDetail.innerHTML = "";
         emptyStateEl.style.display = "block";
+        renderRincianChart([], tipe);
         return;
       }
 
       emptyStateEl.style.display = "none";
 
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
-        // === MODE BIASA (4 kolom) ===
         let htmlBody = "";
         let total = 0;
 
@@ -568,7 +709,7 @@
           </tr>
         `;
       } else {
-        // === MODE SISA: 6 kolom, saldo berjalan ===
+        // MODE SISA: 6 kolom, saldo berjalan
         let htmlBody = "";
         let runningSisa = 0;
         let totalPemasukan = 0;
@@ -628,9 +769,9 @@
         `;
       }
 
-      // aktifkan edit nominal
       attachEditListeners();
       updateEditHint();
+      renderRincianChart(rows, tipe);
     }
 
     btnSaveEdits.addEventListener("click", async () => {
