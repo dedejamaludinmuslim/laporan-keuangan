@@ -192,6 +192,42 @@
       background: rgba(124, 58, 237, 0.08);
       color: var(--purple);
     }
+
+    /* Area tombol simpan revisi */
+    .edit-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .btn-save-edit {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      align-self: flex-start;
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-save-edit:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .edit-hint {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    .edited-cell {
+      background-color: rgba(199, 210, 254, 0.6);
+    }
   </style>
 </head>
 <body>
@@ -232,6 +268,15 @@
         Belum ada transaksi untuk filter ini.
       </div>
     </div>
+
+    <div class="edit-actions">
+      <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
+        Simpan revisi nominal
+      </button>
+      <div class="edit-hint" id="editHint">
+        Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -254,6 +299,11 @@
     const tfootDetail    = document.getElementById("tfootDetail");
     const emptyStateEl   = document.getElementById("emptyState");
     const theadRow       = document.getElementById("theadRow");
+    const btnSaveEdits   = document.getElementById("btnSaveEdits");
+    const editHint       = document.getElementById("editHint");
+
+    // Map id_transaksi -> jumlah_baru
+    const pendingEdits = new Map();
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
@@ -296,6 +346,87 @@
       return "";
     }
 
+    function updateEditHint() {
+      const hasEdits = pendingEdits.size > 0;
+      btnSaveEdits.disabled = !hasEdits;
+      if (hasEdits) {
+        editHint.textContent = 'Ada revisi nominal yang belum disimpan. Klik "Simpan revisi nominal" untuk mengupdate data.';
+      } else {
+        editHint.textContent = 'Tekan nominal jumlah di tabel untuk mengubah, lalu simpan revisi.';
+      }
+    }
+
+    function attachEditListeners() {
+      const cells = document.querySelectorAll(".editable-amount");
+      cells.forEach(cell => {
+        cell.addEventListener("click", () => {
+          if (cell.dataset.editing === "true") return;
+
+          const id = cell.dataset.id;
+          const original = Number(cell.dataset.original || 0);
+          const currentValue = pendingEdits.has(id)
+            ? pendingEdits.get(id)
+            : original;
+
+          cell.dataset.editing = "true";
+
+          const input = document.createElement("input");
+          input.type = "number";
+          input.min = "0";
+          input.step = "1000";
+          input.value = currentValue;
+          input.style.width = "100%";
+          input.style.boxSizing = "border-box";
+          input.style.fontSize = "0.8rem";
+          input.style.padding = "4px 6px";
+
+          input.addEventListener("click", (e) => e.stopPropagation());
+
+          const finishEdit = (commit) => {
+            const raw = Number(input.value || 0);
+            cell.dataset.editing = "false";
+
+            if (commit && !isNaN(raw) && raw >= 0 && raw !== original) {
+              pendingEdits.set(id, raw);
+              cell.innerHTML = formatRupiah(raw);
+              cell.classList.add("edited-cell");
+            } else {
+              // kalau batal / sama dengan original
+              if (pendingEdits.has(id) && (isNaN(raw) || raw === original)) {
+                pendingEdits.delete(id);
+              }
+              cell.innerHTML = formatRupiah(
+                pendingEdits.has(id) ? pendingEdits.get(id) : original
+              );
+              if (!pendingEdits.has(id)) {
+                cell.classList.remove("edited-cell");
+              }
+            }
+            updateEditHint();
+          };
+
+          input.addEventListener("blur", () => finishEdit(true));
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              input.blur();
+            } else if (e.key === "Escape") {
+              // batal revisi: kembalikan tampilan awal
+              cell.dataset.editing = "false";
+              cell.innerHTML = formatRupiah(
+                pendingEdits.has(id) ? pendingEdits.get(id) : original
+              );
+            }
+          });
+
+          cell.innerHTML = "";
+          cell.appendChild(input);
+          input.focus();
+          input.select();
+        });
+      });
+    }
+
     async function loadDetail() {
       if (!role || !tipe || !bulanKey) {
         pageTitleEl.textContent = "Filter tidak lengkap";
@@ -303,6 +434,10 @@
         emptyStateEl.style.display = "block";
         return;
       }
+
+      // reset state revisi
+      pendingEdits.clear();
+      updateEditHint();
 
       // Atur judul & info
       pageTitleEl.textContent = tipeLabel(role, tipe);
@@ -340,7 +475,7 @@
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
         query = query.eq('jenis', tipe);
       }
-      // tipe 'sisa' → ambil semua jenis, nanti dipisah pemasukan/pengeluaran
+      // tipe 'sisa' → ambil semua jenis
 
       const { data, error } = await query.order('tanggal', { ascending: true });
 
@@ -362,8 +497,8 @@
 
       emptyStateEl.style.display = "none";
 
-      // === MODE PENERIMAAN / PENGELUARAN BIASA (4 kolom) ===
       if (tipe === "pemasukan" || tipe === "pengeluaran") {
+        // === MODE BIASA (4 kolom) ===
         let htmlBody = "";
         let total = 0;
 
@@ -376,7 +511,9 @@
               <td>${idx + 1}</td>
               <td>${t.tanggal}</td>
               <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
-              <td>${formatRupiah(jumlah)}</td>
+              <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
+                ${formatRupiah(jumlah)}
+              </td>
             </tr>
           `;
         });
@@ -404,15 +541,33 @@
           const jumlah = Number(t.jumlah || 0);
           let valPemasukan = "";
           let valPengeluaran = "";
+          let cellPemasukan = "";
+          let cellPengeluaran = "";
 
           if (t.jenis === "pemasukan") {
             runningSisa += jumlah;
             totalPemasukan += jumlah;
             valPemasukan = formatRupiah(jumlah);
+            cellPemasukan = `
+              <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
+                ${valPemasukan}
+              </td>
+            `;
+            cellPengeluaran = `<td></td>`;
           } else if (t.jenis === "pengeluaran") {
             runningSisa -= jumlah;
             totalPengeluaran += jumlah;
             valPengeluaran = formatRupiah(jumlah);
+            cellPemasukan = `<td></td>`;
+            cellPengeluaran = `
+              <td class="editable-amount" data-id="${t.id}" data-original="${jumlah}">
+                ${valPengeluaran}
+              </td>
+            `;
+          } else {
+            // jaga-jaga kalau ada jenis lain
+            cellPemasukan = `<td></td>`;
+            cellPengeluaran = `<td></td>`;
           }
 
           htmlBody += `
@@ -420,8 +575,8 @@
               <td>${idx + 1}</td>
               <td>${t.tanggal}</td>
               <td>${(t.rincian || "").replace(/</g, "&lt;")}</td>
-              <td>${valPemasukan}</td>
-              <td>${valPengeluaran}</td>
+              ${cellPemasukan}
+              ${cellPengeluaran}
               <td>${formatRupiah(runningSisa)}</td>
             </tr>
           `;
@@ -447,7 +602,35 @@
       badgeSpan.textContent = tipe.toUpperCase();
       pageSubtitleEl.appendChild(document.createTextNode(" "));
       pageSubtitleEl.appendChild(badgeSpan);
+
+      // aktifkan edit nominal
+      attachEditListeners();
+      updateEditHint();
     }
+
+    btnSaveEdits.addEventListener("click", async () => {
+      if (pendingEdits.size === 0) return;
+
+      btnSaveEdits.disabled = true;
+      editHint.textContent = "Menyimpan revisi ke server...";
+
+      for (const [id, newJumlah] of pendingEdits.entries()) {
+        const { error } = await supabase
+          .from('transaksi_keuangan')
+          .update({ jumlah: newJumlah })
+          .eq('id', id);
+
+        if (error) {
+          console.error("Gagal update id", id, error);
+          alert("Ada revisi yang gagal disimpan. Cek console untuk detailnya.");
+          // lanjut ke id berikutnya saja
+        }
+      }
+
+      // reload data agar sisa / total ikut terhitung ulang
+      await loadDetail();
+      alert("Revisi nominal berhasil disimpan.");
+    });
 
     loadDetail();
   </script>
