@@ -63,24 +63,27 @@
     }
 
     .title-group {
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, var(--purple), var(--blue)); /* sama seperti "Terapkan" */
+      /* border dihilangkan saja karena sudah full color */
+      color: #ffffff;
     }
 
-    .title-group::after {
-      content: "";
-      position: absolute;
-      left: 10px;
-      bottom: 6px;
-      width: 90px;
-      height: 3px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--purple), var(--blue)); /* sama seperti tombol "Terapkan" */
-      opacity: 0.9;
+    /* HAPUS blok ::after yang lama, atau kosongkan kalau masih ada
+    .title-group::after { ... }  → buang saja
+    */
+
+    .title-group h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .title-group p {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-top: 2px;
     }
 
     .title-group h1 {
