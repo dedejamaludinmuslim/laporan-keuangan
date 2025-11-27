@@ -501,8 +501,8 @@
   <div class="app">
     <div class="app-header">
       <div class="title-group">
-        <h1>Laporan Keuangan Rumah Tangga</h1>
-        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
+        <h1>LAPORAN KEUANGAN RUMAH TANGGA</h1>
+        <p>Monitoring Pemasukan & Pengeluaran Bulanan dalam satu Aplikasi.</p>
       </div>
 
       <button id="btnInstall" class="btn-ghost btn-mixed"
@@ -551,7 +551,7 @@
             </div>
 
             <div class="form-group">
-              <label for="rincian">Tulis rincian laporan di bawah ya...</label>
+              <label for="rincian">Ketik rincian laporan di bawah ya...</label>
               <input type="text" id="rincian" list="rincianList"
                      placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
               <datalist id="rincianList"></datalist>
@@ -559,7 +559,7 @@
             </div>
 
             <div class="form-group">
-              <label for="jumlah">Jumlah (Rp)</label>
+              <label for="jumlah">Jumlah (Rp):</label>
               <input type="number" id="jumlah" min="0" step="1000" placeholder="misal: 500000" required />
             </div>
           </div>
@@ -595,13 +595,13 @@
 
         <!-- REKAP ABI -->
         <div class="rekap-section">
-          <div class="rekap-title">Rekap laporan Abi:</div>
+          <div class="rekap-title">Rekap Laporan Abi</div>
           <div class="rekap-grid-2" id="rekap-abi-grid"></div>
         </div>
 
         <!-- REKAP UMI -->
         <div class="rekap-section">
-          <div class="rekap-title">Rekap laporan Umi:</div>
+          <div class="rekap-title">Rekap Laporan Umi</div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
         </div>
         </div>
@@ -790,7 +790,7 @@
 
       if (error) {
         console.error('Gagal simpan transaksi:', error);
-        errorMsg.textContent = "Gagal menyimpan ke server. Coba lagi.";
+        errorMsg.textContent = "Gagal menyimpan ke database. Coba lagi.";
         errorMsg.style.display = "block";
         return;
       }
@@ -804,7 +804,7 @@
       pelaporToggleBtns.forEach(b => b.classList.remove("active"));
       jenisToggleBtns.forEach(b => b.classList.remove("active"));
 
-      showToast("Laporan keuangan berhasil disimpan.");
+      showToast("Laporan berhasil disimpan.");
     });
 
     const bulanRekapEl = document.getElementById("bulanRekap");
@@ -873,37 +873,31 @@
 
       abiGrid.innerHTML = `
         <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pemasukan">
-          <h3>Pemasukan Abi</h3>
+          <h3>Pemasukan:</h3>
           <div class="rekap-value">${formatRupiah(r.pemasukanAbi)}</div>
-          <div class="rekap-sub">Total pemasukan yang dilaporkan Abi</div>
         </div>
         <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pengeluaran">
-          <h3>Pengeluaran Abi</h3>
+          <h3>Pengeluaran:</h3>
           <div class="rekap-value">${formatRupiah(r.pengeluaranAbi)}</div>
-          <div class="rekap-sub">Total pengeluaran yang dilaporkan Abi</div>
         </div>
         <div class="rekap-card full rekap-click" data-role="Abi" data-tipe="sisa">
-          <h3>Sisa Abi</h3>
+          <h3>Sisa</h3>
           <div class="rekap-value">${formatRupiah(r.sisaAbi)}</div>
-          <div class="rekap-sub">Pemasukan Abi - Pengeluaran Abi</div>
         </div>
       `;
 
       umiGrid.innerHTML = `
         <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pemasukan">
-          <h3>Pemasukan Umi</h3>
+          <h3>Pemasukan:</h3>
           <div class="rekap-value">${formatRupiah(r.pemasukanUmi)}</div>
-          <div class="rekap-sub">Total pemasukan yang dilaporkan Umi</div>
         </div>
         <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pengeluaran">
-          <h3>Pengeluaran Umi</h3>
+          <h3>Pengeluaran:</h3>
           <div class="rekap-value">${formatRupiah(r.pengeluaranUmi)}</div>
-          <div class="rekap-sub">Total pengeluaran yang dilaporkan Umi</div>
         </div>
         <div class="rekap-card full rekap-click" data-role="Umi" data-tipe="sisa">
-          <h3>Sisa Umi</h3>
+          <h3>Sisa:</h3>
           <div class="rekap-value">${formatRupiah(r.sisaUmi)}</div>
-          <div class="rekap-sub">Pemasukan Umi - Pengeluaran Umi</div>
         </div>
       `;
 
