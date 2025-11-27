@@ -86,12 +86,12 @@
 
     .badge-row {
       display: flex;
-      justify-content: flex-start;   /* di index: brand di kanan */
+      justify-content: flex-start;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
-    
+
     .badge-brand {
       padding: 4px 10px;
       border-radius: 999px;
@@ -101,7 +101,7 @@
       background: var(--purple-soft);
       color: var(--purple);
     }
-    
+
     .tabs {
       display: flex;
       gap: 6px;
@@ -110,11 +110,11 @@
       padding: 3px;
       border-radius: 999px;
     }
-    
+
     .tab {
       flex: 1;
       text-align: center;
-      padding: 9px 12px;          /* ⬅ sama seperti tombol "Terapkan" */
+      padding: 9px 12px; /* sama seperti tombol "Terapkan" */
       border-radius: 999px;
       border: none;
       background: transparent;
@@ -233,7 +233,7 @@
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: var(--white);
       box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
-      display: inline-flex;       /* penting supaya tidak full width */
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
@@ -471,6 +471,30 @@
       font-size: 0.8rem;
       text-align: center;
     }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -480,12 +504,13 @@
         <h1>Laporan Keuangan Rumah Tangga</h1>
         <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
       </div>
-    
+
       <button id="btnInstall" class="btn-ghost btn-mixed"
               style="align-self: flex-end; display: none; margin-top: 4px;">
         Install aplikasi
       </button>
     </div>
+
     <div class="tabs">
       <button class="tab active" data-tab="input">Input laporan</button>
       <button class="tab" data-tab="rekap">Rekap bulanan</button>
@@ -539,7 +564,7 @@
             </div>
           </div>
 
-          <!-- TOMBOL SIMPAN, TIDAK FULL WIDTH, DI TENGAH -->
+          <!-- TOMBOL SIMPAN, DI TENGAH -->
           <div class="form-group full" style="margin-top: 10px; text-align: center;">
             <button type="submit" class="btn-primary btn-mixed">
               Simpan
@@ -587,6 +612,8 @@
     </div>
   </div>
 
+  <div id="toast" class="toast"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
@@ -608,6 +635,19 @@
       const d = new Date(dateStr);
       if (isNaN(d)) return null;
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    // --- TOAST HELPER ---
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
     }
 
     async function loadAllTransaksi() {
@@ -767,7 +807,7 @@
       pelaporToggleBtns.forEach(b => b.classList.remove("active"));
       jenisToggleBtns.forEach(b => b.classList.remove("active"));
 
-      alert("Laporan keuangan berhasil disimpan.");
+      showToast("Laporan keuangan berhasil disimpan.");
     });
 
     const bulanRekapEl = document.getElementById("bulanRekap");
@@ -881,7 +921,7 @@
       });
     }
 
-    btnRefreshRekap.addEventListener("click", () => {
+    btnRefresh.addEventListener("click", () => {
       renderRekap();
     });
 
@@ -890,39 +930,35 @@
       await renderRekap();
     })();
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker
-        .register('service-worker.js')
-        .catch(function (err) {
-          console.error('Service worker gagal didaftarkan:', err);
-        });
-    });
-  }
+    // Service worker untuk PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker
+          .register('service-worker.js')
+          .catch(function (err) {
+            console.error('Service worker gagal didaftarkan:', err);
+          });
+      });
+    }
+
     // --- PWA install button ---
     let deferredPrompt;
     const btnInstall = document.getElementById('btnInstall');
-    
+
     window.addEventListener('beforeinstallprompt', (e) => {
-      // block prompt default
       e.preventDefault();
       deferredPrompt = e;
-    
-      // tampilkan tombol install
       if (btnInstall) {
         btnInstall.style.display = 'inline-flex';
       }
     });
-    
+
     if (btnInstall) {
       btnInstall.addEventListener('click', async () => {
         if (!deferredPrompt) return;
-    
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         console.log('User choice:', choice.outcome);
-    
-        // apapun pilihannya, sembunyikan tombol
         deferredPrompt = null;
         btnInstall.style.display = 'none';
       });
