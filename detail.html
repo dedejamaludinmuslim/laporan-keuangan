@@ -834,7 +834,7 @@
 
       if (error) {
         console.error('Gagal load detail:', error);
-        emptyStateEl.textContent = "Gagal memuat data dari server.";
+        emptyStateEl.textContent = "Gagal memuat data dari database.";
         emptyStateEl.style.display = "block";
         chartCardEl.style.display = (tipe === "sisa") ? "none" : "block";
         return;
@@ -877,7 +877,7 @@
 
         tbodyDetail.innerHTML = htmlBody;
 
-        const labelTotal = tipe === "pemasukan" ? "Total pemasukan" : "Total pengeluaran";
+        const labelTotal = tipe === "pemasukan" ? "Total Pemasukan" : "Total Pengeluaran";
 
         tfootDetail.innerHTML = `
           <tr>
@@ -961,7 +961,7 @@
       if (!hasAnyChanges()) return;
 
       btnSaveEdits.disabled = true;
-      editHint.textContent = "Menyimpan revisi ke server...";
+      editHint.textContent = "Menyimpan revisi ke database...";
 
       for (const [id, rec] of pendingEdits.entries()) {
         const updateObj = {};
@@ -977,7 +977,7 @@
 
         if (error) {
           console.error("Gagal update id", id, error);
-          showToast("Sebagian revisi gagal disimpan. Cek console.");
+          showToast("Sebagian revisi gagal disimpan. Coba lagi nanti.");
         }
       }
 
