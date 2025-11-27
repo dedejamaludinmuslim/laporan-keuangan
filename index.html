@@ -84,6 +84,24 @@
       margin-top: 4px;
     }
 
+    .badge-row {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge-brand {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
     .tabs {
       display: flex;
       gap: 6px;
@@ -96,7 +114,7 @@
     .tab {
       flex: 1;
       text-align: center;
-      padding: 9px 12px;
+      padding: 9px 12px; /* sama seperti tombol "Terapkan" */
       border-radius: 999px;
       border: none;
       background: transparent;
@@ -255,6 +273,18 @@
       box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
     }
 
+    .btn-blue-solid {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: rgba(37, 99, 235, 0.9);
+    }
+
+    .btn-purple-solid {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: rgba(124, 58, 237, 0.9);
+    }
+
     .btn-mixed {
       background: linear-gradient(135deg, var(--purple), var(--blue));
       color: #ffffff;
@@ -328,6 +358,21 @@
       color: var(--gray);
     }
 
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--gray);
+    }
+
     .month-row {
       display: flex;
       gap: 6px;
@@ -384,7 +429,8 @@
     }
 
     .rekap-card.full h3,
-    .rekap-card.full .rekap-value {
+    .rekap-card.full .rekap-value,
+    .rekap-card.full .rekap-sub {
       text-align: center;
     }
 
@@ -392,6 +438,12 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--dark);
+    }
+
+    .rekap-sub {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 2px;
     }
 
     .month-input {
@@ -420,14 +472,7 @@
       text-align: center;
     }
 
-    .rekap-hint {
-      margin-top: 8px;
-      font-size: 0.7rem;
-      color: var(--gray);
-      text-align: center;
-    }
-
-    /* TOAST */
+    /* TOAST NOTIFICATION */
     .toast {
       position: fixed;
       left: 50%;
@@ -457,10 +502,11 @@
     <div class="app-header">
       <div class="title-group">
         <h1>Laporan Keuangan Rumah Tangga</h1>
-        <p>Monitoring pemasukan &amp; pengeluaran Abi–Umi dalam satu layar.</p>
+        <p>Monitoring pemasukan & pengeluaran Abi–Umi dalam satu layar.</p>
       </div>
 
-      <button id="btnInstall" class="btn-ghost btn-mixed" style="align-self:flex-end;display:none;margin-top:4px;">
+      <button id="btnInstall" class="btn-ghost btn-mixed"
+              style="align-self: flex-end; display: none; margin-top: 4px;">
         Install aplikasi
       </button>
     </div>
@@ -477,15 +523,12 @@
           <span class="dot"></span>
           <span>Input Laporan Keuangan</span>
         </div>
-
         <form id="form-laporan">
           <div class="form-grid">
             <div class="form-group">
               <label for="tanggal">Mau laporan yang kapan?</label>
               <input type="date" id="tanggal" required />
-              <small class="hint">
-                Format tanggal mengikuti pengaturan HP/komputer (contoh: 2025-11-26).
-              </small>
+              <small class="hint">Format tanggal mengikuti pengaturan HP/komputer (contoh: 2025-11-26).</small>
             </div>
 
             <div class="form-group">
@@ -509,13 +552,8 @@
 
             <div class="form-group">
               <label for="rincian">Tulis rincian laporan di bawah ya...</label>
-              <input
-                type="text"
-                id="rincian"
-                list="rincianList"
-                placeholder="Misal: Gaji, Belanja bulanan, Infak, dll."
-                required
-              />
+              <input type="text" id="rincian" list="rincianList"
+                     placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
               <datalist id="rincianList"></datalist>
               <small class="hint">Ketik beberapa huruf, muncul rekomendasi dari laporan sebelumnya.</small>
             </div>
@@ -526,19 +564,20 @@
             </div>
           </div>
 
-          <div class="form-group full" style="margin-top:10px;text-align:center;">
+          <!-- TOMBOL SIMPAN, DI TENGAH -->
+          <div class="form-group full" style="margin-top: 10px; text-align: center;">
             <button type="submit" class="btn-primary btn-mixed">
               Simpan
               <span>💾</span>
             </button>
           </div>
 
-          <div id="error-msg" class="error" style="display:none;"></div>
+          <div id="error-msg" class="error" style="display: none;"></div>
         </form>
       </div>
 
       <!-- TAB REKAP -->
-      <div class="card tab-panel" id="tab-rekap" style="display:none;">
+      <div class="card tab-panel" id="tab-rekap" style="display: none;">
         <div class="section-title">
           <span class="dot"></span>
           <span>Rekap Laporan Bulanan</span>
@@ -554,18 +593,17 @@
           </div>
         </div>
 
+        <!-- REKAP ABI -->
         <div class="rekap-section">
           <div class="rekap-title">Rekap laporan Abi:</div>
           <div class="rekap-grid-2" id="rekap-abi-grid"></div>
         </div>
 
+        <!-- REKAP UMI -->
         <div class="rekap-section">
           <div class="rekap-title">Rekap laporan Umi:</div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
         </div>
-
-        <div class="rekap-hint">
-          Pilih salah satu kotak untuk melihat rincian laporan.
         </div>
       </div>
     </div>
@@ -575,21 +613,18 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Supabase config
-    const supabaseUrl = "https://qalbicnotpxdpkasqrke.supabase.co";
-    const supabaseKey =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4";
+    const supabaseUrl = 'https://qalbicnotpxdpkasqrke.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbGJpY25vdHB4ZHBrYXNxcmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNDY4NDksImV4cCI6MjA3OTcyMjg0OX0.ZqPAPeZ9KCeB7_u4QYHFniU3_XQjgnAJb2jPDwrwXB4';
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     let transaksi = [];
-    let deferredPrompt = null;
 
     function formatRupiah(angka) {
       const n = Number(angka) || 0;
       return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
-        maximumFractionDigits: 0
+        maximumFractionDigits: 0,
       }).format(n);
     }
 
@@ -599,332 +634,332 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     }
 
+    // --- TOAST HELPER ---
     let toastTimeout;
     function showToast(message) {
-      const toast = document.getElementById("toast");
+      const toast = document.getElementById('toast');
       if (!toast) return;
       toast.textContent = message;
-      toast.classList.add("show");
+      toast.classList.add('show');
       clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => {
-        toast.classList.remove("show");
+        toast.classList.remove('show');
       }, 2500);
     }
 
     async function loadAllTransaksi() {
       const { data, error } = await supabase
-        .from("transaksi_keuangan")
-        .select("*")
-        .order("tanggal", { ascending: true });
+        .from('transaksi_keuangan')
+        .select('*')
+        .order('tanggal', { ascending: true });
 
       if (error) {
-        console.error("Gagal load transaksi:", error);
+        console.error('Gagal load transaksi:', error);
         transaksi = [];
         return;
       }
+
       transaksi = data || [];
     }
 
-    function switchTab(name) {
-      const tabs = document.querySelectorAll(".tab");
-      const panels = document.querySelectorAll(".tab-panel");
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".tab-panel");
 
-      tabs.forEach((t) => {
+    function switchTab(name) {
+      tabs.forEach(t => {
         const isActive = t.dataset.tab === name;
         t.classList.toggle("active", isActive);
       });
-
-      panels.forEach((p) => {
-        p.style.display = p.id === `tab-${name}` ? "block" : "none";
+      panels.forEach(p => {
+        p.style.display = (p.id === `tab-${name}`) ? "block" : "none";
       });
     }
 
-    function initTabs() {
-      const tabs = document.querySelectorAll(".tab");
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          const target = tab.dataset.tab;
-          switchTab(target);
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.tab;
+        switchTab(target);
 
-          if (history.replaceState) {
-            const url = new URL(window.location);
-            url.hash = target === "rekap" ? "#rekap" : "";
-            history.replaceState(null, "", url);
-          }
-        });
+        if (history.replaceState) {
+          const url = new URL(window.location);
+          url.hash = (target === "rekap") ? "#rekap" : "";
+          history.replaceState(null, "", url);
+        }
       });
+    });
 
+    (function initTabFromUrl() {
       const hash = window.location.hash;
-      const initialTab = hash === "#rekap" ? "rekap" : "input";
+      const initialTab = (hash === "#rekap") ? "rekap" : "input";
       switchTab(initialTab);
-    }
+    })();
 
-    function setDefaultTanggal() {
+    const form = document.getElementById("form-laporan");
+    const jenisEl = document.getElementById("jenis");
+    const pelaporEl = document.getElementById("pelapor");
+    const rincianEl = document.getElementById("rincian");
+    const rincianListEl = document.getElementById("rincianList");
+    const errorMsg = document.getElementById("error-msg");
+
+    const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
+    const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
+
+    // Set default tanggal = hari ini
+    (function setDefaultTanggal() {
       const tglInput = document.getElementById("tanggal");
-      if (!tglInput) return;
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, "0");
       const dd = String(now.getDate()).padStart(2, "0");
       tglInput.value = `${yyyy}-${mm}-${dd}`;
-    }
+    })();
 
     async function refreshRincianDatalist() {
-      const jenisEl = document.getElementById("jenis");
-      const rincianListEl = document.getElementById("rincianList");
-      if (!jenisEl || !rincianListEl) return;
-
       const jenis = jenisEl.value;
       rincianListEl.innerHTML = "";
       if (!jenis) return;
 
       const { data, error } = await supabase
-        .from("transaksi_keuangan")
-        .select("rincian")
-        .eq("jenis", jenis);
+        .from('transaksi_keuangan')
+        .select('rincian')
+        .eq('jenis', jenis);
 
       if (error) {
-        console.error("Gagal load rincian:", error);
+        console.error('Gagal load rincian:', error);
         return;
       }
 
       const setRincian = new Set(
         (data || [])
-          .map((t) => (t.rincian || "").trim())
+          .map(t => (t.rincian || '').trim())
           .filter(Boolean)
       );
 
-      setRincian.forEach((r) => {
+      for (const r of setRincian) {
         const opt = document.createElement("option");
         opt.value = r;
         rincianListEl.appendChild(opt);
-      });
-    }
-
-    function initToggles() {
-      const pelaporToggleBtns = document.querySelectorAll("#pelaporToggle .toggle-btn");
-      const jenisToggleBtns = document.querySelectorAll("#jenisToggle .toggle-btn");
-      const pelaporEl = document.getElementById("pelapor");
-      const jenisEl = document.getElementById("jenis");
-
-      pelaporToggleBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const value = btn.dataset.value;
-          pelaporEl.value = value;
-          pelaporToggleBtns.forEach((b) => b.classList.toggle("active", b === btn));
-        });
-      });
-
-      jenisToggleBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const value = btn.dataset.value;
-          jenisEl.value = value;
-          jenisToggleBtns.forEach((b) => b.classList.toggle("active", b === btn));
-          refreshRincianDatalist();
-        });
-      });
-
-      // Default nilai awal
-      if (!pelaporEl.value && pelaporToggleBtns[0]) {
-        pelaporToggleBtns[0].click();
-      }
-      if (!jenisEl.value && jenisToggleBtns[0]) {
-        jenisToggleBtns[0].click();
       }
     }
 
-    function initForm() {
-      const form = document.getElementById("form-laporan");
-      const errorMsg = document.getElementById("error-msg");
-      const pelaporEl = document.getElementById("pelapor");
-      const jenisEl = document.getElementById("jenis");
-      const tanggalEl = document.getElementById("tanggal");
-      const rincianEl = document.getElementById("rincian");
-      const jumlahEl = document.getElementById("jumlah");
+    pelaporToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        pelaporEl.value = value;
+        pelaporToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
+      });
+    });
 
-      if (!form) return;
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        errorMsg.style.display = "none";
-        errorMsg.textContent = "";
-
-        const tanggal = tanggalEl.value;
-        const pelapor = pelaporEl.value;
-        const jenis = jenisEl.value;
-        const rincian = (rincianEl.value || "").trim();
-        const jumlah = Number(jumlahEl.value || 0);
-
-        if (!tanggal || !pelapor || !jenis || !rincian || !(jumlah > 0)) {
-          errorMsg.textContent = "Pastikan semua kolom sudah diisi dengan benar.";
-          errorMsg.style.display = "block";
-          return;
-        }
-
-        const insertPayload = {
-          tanggal,
-          pelapor,
-          jenis,
-          rincian,
-          jumlah
-        };
-
-        const { error } = await supabase
-          .from("transaksi_keuangan")
-          .insert(insertPayload);
-
-        if (error) {
-          console.error("Gagal simpan:", error);
-          errorMsg.textContent = "Gagal menyimpan data. Coba lagi.";
-          errorMsg.style.display = "block";
-          return;
-        }
-
-        showToast("Laporan keuangan tersimpan.");
-        rincianEl.value = "";
-        jumlahEl.value = "";
-        await loadAllTransaksi();
+    jenisToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = btn.dataset.value;
+        jenisEl.value = value;
+        jenisToggleBtns.forEach(b => b.classList.toggle("active", b === btn));
         refreshRincianDatalist();
       });
-    }
+    });
 
-    function getRekap(role, bulanKey) {
-      const filtered = transaksi.filter(
-        (t) => t.pelapor === role && getMonthKey(t.tanggal) === bulanKey
-      );
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = "none";
 
-      let totalPemasukan = 0;
-      let totalPengeluaran = 0;
+      const tanggal = document.getElementById("tanggal").value;
+      const pelapor = pelaporEl.value;
+      const jenis = jenisEl.value;
+      const rincian = rincianEl.value.trim();
+      const jumlah = Number(document.getElementById("jumlah").value || 0);
 
-      filtered.forEach((t) => {
-        const j = Number(t.jumlah) || 0;
-        if (t.jenis === "pemasukan") totalPemasukan += j;
-        if (t.jenis === "pengeluaran") totalPengeluaran += j;
-      });
-
-      return {
-        totalPemasukan,
-        totalPengeluaran,
-        sisa: totalPemasukan - totalPengeluaran
-      };
-    }
-
-    function renderRekapGrid(role, containerId, bulanKey) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      container.innerHTML = "";
-
-      if (!bulanKey) return;
-
-      const { totalPemasukan, totalPengeluaran, sisa } = getRekap(role, bulanKey);
-      const hasData = totalPemasukan > 0 || totalPengeluaran > 0;
-
-      if (!hasData) {
-        const emptyDiv = document.createElement("div");
-        emptyDiv.textContent = "Belum ada data untuk bulan ini.";
-        emptyDiv.style.fontSize = "0.75rem";
-        emptyDiv.style.color = "var(--gray)";
-        emptyDiv.style.gridColumn = "1 / -1";
-        container.appendChild(emptyDiv);
+      if (!tanggal || !pelapor || !jenis || !rincian || !jumlah) {
+        errorMsg.textContent = "Mohon lengkapi semua field wajib dan pastikan jumlah > 0.";
+        errorMsg.style.display = "block";
         return;
       }
 
-      function createCard(title, value, tipe) {
-        const div = document.createElement("div");
-        div.className = "rekap-card";
-        div.innerHTML = `
-          <h3>${title}</h3>
-          <div class="rekap-value">${formatRupiah(value)}</div>
-        `;
-        div.addEventListener("click", () => {
-          const params = new URLSearchParams({
-            role,
-            tipe,
-            bulan: bulanKey
-          });
-          window.location.href = `detail.html?${params.toString()}`;
-        });
-        return div;
+      const newItem = {
+        tanggal,
+        bulan_key: getMonthKey(tanggal),
+        pelapor,
+        jenis,
+        rincian,
+        jumlah
+      };
+
+      const { error } = await supabase
+        .from('transaksi_keuangan')
+        .insert([newItem]);
+
+      if (error) {
+        console.error('Gagal simpan transaksi:', error);
+        errorMsg.textContent = "Gagal menyimpan ke server. Coba lagi.";
+        errorMsg.style.display = "block";
+        return;
       }
 
-      const cardPemasukan = createCard("Total Pemasukan", totalPemasukan, "pemasukan");
-      const cardPengeluaran = createCard("Total Pengeluaran", totalPengeluaran, "pengeluaran");
+      await loadAllTransaksi();
+      await refreshRincianDatalist();
 
-      const cardSisa = document.createElement("div");
-      cardSisa.className = "rekap-card full";
-      cardSisa.innerHTML = `
-        <h3>Sisa Bulan Ini</h3>
-        <div class="rekap-value">${formatRupiah(sisa)}</div>
-      `;
-      cardSisa.addEventListener("click", () => {
-        const params = new URLSearchParams({
-          role,
-          tipe: "sisa",
-          bulan: bulanKey
-        });
-        window.location.href = `detail.html?${params.toString()}`;
-      });
+      form.reset();
+      pelaporEl.value = "";
+      jenisEl.value = "";
+      pelaporToggleBtns.forEach(b => b.classList.remove("active"));
+      jenisToggleBtns.forEach(b => b.classList.remove("active"));
 
-      container.appendChild(cardPemasukan);
-      container.appendChild(cardPengeluaran);
-      container.appendChild(cardSisa);
-    }
+      showToast("Laporan keuangan berhasil disimpan.");
+    });
 
-    function initRekap() {
-      const bulanInput = document.getElementById("bulanRekap");
-      const btnRefresh = document.getElementById("btnRefreshRekap");
+    const bulanRekapEl = document.getElementById("bulanRekap");
+    const abiGrid = document.getElementById("rekap-abi-grid");
+    const umiGrid = document.getElementById("rekap-umi-grid");
+    const btnRefresh = document.getElementById("btnRefreshRekap");
 
-      if (!bulanInput || !btnRefresh) return;
-
+    (function setDefaultMonth() {
       const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const defaultMonth = `${yyyy}-${mm}`;
-      bulanInput.value = defaultMonth;
+      const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      bulanRekapEl.value = key;
+    })();
 
-      function refresh() {
-        const bulanKey = bulanInput.value;
-        renderRekapGrid("Abi", "rekap-abi-grid", bulanKey);
-        renderRekapGrid("Umi", "rekap-umi-grid", bulanKey);
+    async function hitungRekap(bulanKey) {
+      const { data, error } = await supabase
+        .from('transaksi_keuangan')
+        .select('*')
+        .eq('bulan_key', bulanKey);
+
+      if (error) {
+        console.error('Gagal ambil rekap:', error);
+        return {
+          pemasukanAbi: 0,
+          pengeluaranAbi: 0,
+          sisaAbi: 0,
+          pemasukanUmi: 0,
+          pengeluaranUmi: 0,
+          sisaUmi: 0,
+          pemasukanAll: 0,
+          pengeluaranAll: 0,
+          sisaAll: 0,
+        };
       }
 
-      btnRefresh.addEventListener("click", (e) => {
-        e.preventDefault();
-        refresh();
-      });
+      const dataBulan = data || [];
 
-      refresh();
+      const sum = (filterFn) =>
+        dataBulan.filter(filterFn).reduce((acc, cur) => acc + Number(cur.jumlah || 0), 0);
+
+      const pemasukanAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pemasukan");
+      const pengeluaranAbi = sum(t => t.pelapor === "Abi" && t.jenis === "pengeluaran");
+      const pemasukanUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pemasukan");
+      const pengeluaranUmi = sum(t => t.pelapor === "Umi" && t.jenis === "pengeluaran");
+
+      const pemasukanAll = pemasukanAbi + pemasukanUmi;
+      const pengeluaranAll = pengeluaranAbi + pengeluaranUmi;
+
+      return {
+        pemasukanAbi,
+        pengeluaranAbi,
+        sisaAbi: pemasukanAbi - pengeluaranAbi,
+        pemasukanUmi,
+        pengeluaranUmi,
+        sisaUmi: pemasukanUmi - pengeluaranUmi,
+        pemasukanAll,
+        pengeluaranAll,
+        sisaAll: pemasukanAll - pengeluaranAll,
+      };
     }
 
-    function initPWA() {
-      const btnInstall = document.getElementById("btnInstall");
-      if (!btnInstall) return;
+    async function renderRekap() {
+      const bulanKey = bulanRekapEl.value;
+      if (!bulanKey) return;
 
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        btnInstall.style.display = "inline-flex";
+      const r = await hitungRekap(bulanKey);
+
+      abiGrid.innerHTML = `
+        <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pemasukan">
+          <h3>Pemasukan Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanAbi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pengeluaran">
+          <h3>Pengeluaran Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranAbi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Abi</div>
+        </div>
+        <div class="rekap-card full rekap-click" data-role="Abi" data-tipe="sisa">
+          <h3>Sisa Abi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaAbi)}</div>
+          <div class="rekap-sub">Pemasukan Abi - Pengeluaran Abi</div>
+        </div>
+      `;
+
+      umiGrid.innerHTML = `
+        <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pemasukan">
+          <h3>Pemasukan Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pemasukanUmi)}</div>
+          <div class="rekap-sub">Total pemasukan yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pengeluaran">
+          <h3>Pengeluaran Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.pengeluaranUmi)}</div>
+          <div class="rekap-sub">Total pengeluaran yang dilaporkan Umi</div>
+        </div>
+        <div class="rekap-card full rekap-click" data-role="Umi" data-tipe="sisa">
+          <h3>Sisa Umi</h3>
+          <div class="rekap-value">${formatRupiah(r.sisaUmi)}</div>
+          <div class="rekap-sub">Pemasukan Umi - Pengeluaran Umi</div>
+        </div>
+      `;
+
+      const cards = document.querySelectorAll(".rekap-click");
+      cards.forEach(card => {
+        card.addEventListener("click", () => {
+          const role = card.dataset.role;
+          const tipe = card.dataset.tipe;
+          const bulan = bulanRekapEl.value;
+          window.location.href = `detail.html?role=${encodeURIComponent(role)}&tipe=${encodeURIComponent(tipe)}&bulan=${encodeURIComponent(bulan)}`;
+        });
       });
+    }
 
-      btnInstall.addEventListener("click", async () => {
+    btnRefresh.addEventListener("click", () => {
+      renderRekap();
+    });
+
+    (async () => {
+      await loadAllTransaksi();
+      await renderRekap();
+    })();
+
+    // Service worker untuk PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker
+          .register('service-worker.js')
+          .catch(function (err) {
+            console.error('Service worker gagal didaftarkan:', err);
+          });
+      });
+    }
+
+    // --- PWA install button ---
+    let deferredPrompt;
+    const btnInstall = document.getElementById('btnInstall');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (btnInstall) {
+        btnInstall.style.display = 'inline-flex';
+      }
+    });
+
+    if (btnInstall) {
+      btnInstall.addEventListener('click', async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
+        const choice = await deferredPrompt.userChoice;
+        console.log('User choice:', choice.outcome);
         deferredPrompt = null;
-        btnInstall.style.display = "none";
+        btnInstall.style.display = 'none';
       });
     }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      initTabs();
-      setDefaultTanggal();
-      initToggles();
-      initForm();
-      initPWA();
-      await loadAllTransaksi();
-      initRekap();
-      refreshRincianDatalist();
-    });
   </script>
 </body>
 </html>
