@@ -232,8 +232,6 @@
     }
 
     .btn-save-edit {
-      display: block;
-      width: 100%;
       border-radius: 999px;
       border: none;
       padding: 9px 14px;
@@ -247,6 +245,7 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+      width: 100%;
     }
 
     .btn-save-edit:disabled {
@@ -330,6 +329,30 @@
       border-radius: 999px;
       background: linear-gradient(90deg, var(--blue), var(--purple));
     }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -402,6 +425,8 @@
     </div>
   </div>
 
+  <div id="toast" class="toast"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // Supabase config (sama dengan index.html)
@@ -431,6 +456,19 @@
     const chartSubtitleEl = document.getElementById("chartSubtitle");
     const chartBarListEl  = document.getElementById("chartBarList");
     const chartEmptyEl    = document.getElementById("chartEmpty");
+
+    // --- TOAST HELPER ---
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
 
     // Map id_transaksi -> { jumlah: number|null, rincian: string|null }
     const pendingEdits = new Map();
@@ -661,7 +699,6 @@
 
       chartCardEl.style.display = "block";
       chartBarListEl.innerHTML = "";
-      chartEmptyEl.style.display = "false";
       chartEmptyEl.style.display = "none";
       chartSubtitleEl.textContent = "";
 
@@ -727,6 +764,7 @@
 
       top.forEach(item => {
         const percent = (item.total / grandTotal) * 100;
+        const percentDisplay = Math.round(percent);
         const widthPercent = maxTotal ? (item.total / maxTotal) * 100 : 0;
 
         const row = document.createElement("div");
@@ -734,7 +772,7 @@
         row.innerHTML = `
           <div class="chart-bar-label">
             <span>${item.rincian} (${item.count}x)</span>
-            <span>${formatRupiah(item.total)} (${percent.toFixed(1)}%)</span>
+            <span>${formatRupiah(item.total)} (${percentDisplay}%)</span>
           </div>
           <div class="chart-bar-track">
             <div class="chart-bar-fill" style="width:${widthPercent}%;"></div>
@@ -939,13 +977,13 @@
 
         if (error) {
           console.error("Gagal update id", id, error);
-          alert("Ada revisi yang gagal disimpan. Cek console untuk detailnya.");
+          showToast("Sebagian revisi gagal disimpan. Cek console.");
         }
       }
 
       pendingEdits.clear();
       await loadDetail();
-      alert("Revisi berhasil disimpan.");
+      showToast("Revisi berhasil disimpan.");
     });
 
     loadDetail();
