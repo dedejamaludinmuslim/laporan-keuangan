@@ -526,7 +526,7 @@
         <form id="form-laporan">
           <div class="form-grid">
             <div class="form-group">
-              <label for="tanggal">Tanggal</label>
+              <label for="tanggal">Mau laporan yang kapan?</label>
               <input type="date" id="tanggal" required />
               <small class="hint">Format tanggal mengikuti pengaturan HP/komputer (contoh: 2025-11-26).</small>
             </div>
@@ -541,7 +541,7 @@
             </div>
 
             <div class="form-group">
-              <label>Jenis laporan</label>
+              <label>Jenis laporan apa?</label>
               <div class="toggle-group" id="jenisToggle">
                 <button type="button" class="toggle-btn" data-value="pemasukan">Pemasukan</button>
                 <button type="button" class="toggle-btn" data-value="pengeluaran">Pengeluaran</button>
@@ -551,7 +551,7 @@
             </div>
 
             <div class="form-group">
-              <label for="rincian">Rincian laporan</label>
+              <label for="rincian">Tulis rincian laporan di bawah ya...</label>
               <input type="text" id="rincian" list="rincianList"
                      placeholder="Misal: Gaji, Belanja bulanan, Infak, dll." required />
               <datalist id="rincianList"></datalist>
@@ -585,11 +585,7 @@
 
         <div class="top-summarizer">
           <div>
-            <small>Pilih bulan &amp; tahun:</small>
-            <div class="pill-row">
-              <span class="pill">Pemasukan vs Pengeluaran</span>
-              <span class="pill">Abi • Umi • Gabungan</span>
-            </div>
+            <small>Mau lihat rekap bulan apa?</small>
           </div>
           <div class="month-row">
             <input type="month" id="bulanRekap" class="month-input" />
@@ -599,13 +595,13 @@
 
         <!-- REKAP ABI -->
         <div class="rekap-section">
-          <div class="rekap-title">Rekap laporan Abi</div>
+          <div class="rekap-title">Rekap laporan Abi:</div>
           <div class="rekap-grid-2" id="rekap-abi-grid"></div>
         </div>
 
         <!-- REKAP UMI -->
         <div class="rekap-section">
-          <div class="rekap-title">Rekap laporan Umi</div>
+          <div class="rekap-title">Rekap laporan Umi:</div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
         </div>
       </div>
