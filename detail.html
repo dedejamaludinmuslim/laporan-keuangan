@@ -376,11 +376,25 @@
       </button>
       <div class="info-label" id="infoBulan"></div>
     </div>
-      <div class="edit-hint" id="editHint">
-        Tekan rincian atau nominal jumlah di tabel untuk mengubah, lalu simpan.
-      </div>
 
-    <!-- KOTAK 1: TABEL + SIMPAN -->
+    <!-- KOTAK 1 (BARU): CHART RINCIAN / PEMASUKAN/PENGELUARAN TERBANYAK -->
+    <div class="card-block" id="chartCard">
+      <div class="chart-section">
+        <div class="chart-title" id="chartTitle">Diagram rincian</div>
+        <div class="chart-subtitle" id="chartSubtitle"></div>
+        <div id="chartBarList" class="chart-bar-list"></div>
+        <div class="empty-state" id="chartEmpty" style="display:none;">
+          Belum ada data untuk menampilkan diagram rincian.
+        </div>
+      </div>
+    </div>
+
+    <!-- KETERANGAN EDIT DIPINDAH KE DEKAT TABEL -->
+    <div class="edit-hint" id="editHint">
+      Tekan rincian atau nominal jumlah di tabel untuk mengubah, lalu simpan.
+    </div>
+
+    <!-- KOTAK 2 (BARU): TABEL RINCIAN + SIMPAN -->
     <div class="card-block">
       <div class="table-wrapper">
         <table id="detailTable">
@@ -409,18 +423,6 @@
           Simpan
           <span>💾</span>
         </button>
-      </div>
-    </div>
-
-    <!-- KOTAK 2: CHART (DISABLE JIKA TIPE = SISA) -->
-    <div class="card-block" id="chartCard">
-      <div class="chart-section">
-        <div class="chart-title" id="chartTitle">Diagram rincian</div>
-        <div class="chart-subtitle" id="chartSubtitle"></div>
-        <div id="chartBarList" class="chart-bar-list"></div>
-        <div class="empty-state" id="chartEmpty" style="display:none;">
-          Belum ada data untuk menampilkan diagram rincian.
-        </div>
       </div>
     </div>
   </div>
@@ -787,7 +789,7 @@
         pageTitleEl.textContent = "Filter tidak lengkap";
         emptyStateEl.textContent = "URL kurang lengkap. Pastikan membuka halaman ini lewat kotak rekap bulanan.";
         emptyStateEl.style.display = "block";
-        chartCardEl.style.display = "none";
+        chartCardEl.style.display = (tipe === "sisa") ? "none" : "block";
         return;
       }
 
