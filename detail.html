@@ -190,13 +190,12 @@
       white-space: nowrap;
     }
 
-    /* Izinkan kolom Rincian membungkus teks panjang */
-    th:nth-child(3),
-    td:nth-child(3) {
+    /* Mode normal (pemasukan / pengeluaran): kolom Rincian boleh wrap */
+    .table-can-wrap th:nth-child(3),
+    .table-can-wrap td:nth-child(3) {
       white-space: normal;
       word-break: break-word;
     }
-
 
     th:nth-child(1),
     td:nth-child(1) {
@@ -512,6 +511,8 @@
     const btnSaveEdits   = document.getElementById("btnSaveEdits");
     const editHint       = document.getElementById("editHint");
     const tableTitleEl   = document.getElementById("tableTitle");
+    const detailTable    = document.getElementById("detailTable");
+
 
     // chart elements
     const chartCardEl     = document.getElementById("chartCard");
@@ -877,6 +878,14 @@
       }
       
       tableTitleEl.textContent = tableTitleText;
+      // pengaturan wrap kolom "Rincian":
+      // - pemasukan/pengeluaran: boleh wrap (lebih hemat lebar)
+      // - sisa: jangan wrap (biarkan tabel melebar & bisa scroll horizontal)
+      if (tipe === "sisa") {
+        detailTable.classList.remove("table-can-wrap");
+      } else {
+        detailTable.classList.add("table-can-wrap");
+      }
 
       if (tipe === "sisa") {
         theadRow.innerHTML = `
