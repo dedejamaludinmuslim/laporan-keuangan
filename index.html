@@ -84,12 +84,14 @@
       margin-top: 4px;
     }
 
+    /* disamakan dengan detail.html */
     .badge-row {
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+      margin-top: 4px;
     }
 
     .badge-brand {
@@ -505,10 +507,14 @@
         <p>Monitoring Pemasukan & Pengeluaran Bulanan dalam satu Aplikasi.</p>
       </div>
 
-      <button id="btnInstall" class="btn-ghost btn-mixed"
-              style="align-self: flex-end; display: none; margin-top: 5px;">
-        Install aplikasi
-      </button>
+      <!-- baris badge + tombol install, sejajar seperti di detail.html -->
+      <div class="badge-row">
+        <span class="badge-brand">Abi &amp; Umi Finance</span>
+        <button id="btnInstall" class="btn-ghost btn-mixed"
+                style="display: none;">
+          Install aplikasi
+        </button>
+      </div>
     </div>
 
     <div class="tabs">
@@ -531,14 +537,14 @@
               <input type="date" id="tanggal" required />
             </div>
 
-          <div class="form-group">
-            <label style="padding-top: 11px; padding-bottom: 9px;">Siapa yang laporan?</label>
+            <div class="form-group">
+              <label style="padding-top: 11px; padding-bottom: 9px;">Siapa yang laporan?</label>
               <div class="toggle-group" id="pelaporToggle">
                 <button type="button" class="toggle-btn" data-value="Abi">Abi</button>
                 <button type="button" class="toggle-btn" data-value="Umi">Umi</button>
               </div>
-            <input type="hidden" id="pelapor" />
-          </div>
+              <input type="hidden" id="pelapor" />
+            </div>
 
             <div class="form-group">
               <label style="padding-top: 11px; padding-bottom: 9px;">Jenis laporan apa?</label>
@@ -599,7 +605,6 @@
         <div class="rekap-section">
           <div class="rekap-title" style="padding-top: 11px; padding-bottom: 9px;"><center>Rekap Laporan Umi</center></div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
-        </div>
         </div>
       </div>
     </div>
