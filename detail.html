@@ -255,9 +255,11 @@
     }
 
     .edit-hint {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--gray);
-      margin-top: 4px;
+      margin-top: 6px;
+      text-align: right;
+      font-style: italic;
     }
 
     .edited-cell {
@@ -391,7 +393,7 @@
 
     <!-- KETERANGAN EDIT DIPINDAH KE DEKAT TABEL -->
     <div class="edit-hint" id="editHint">
-      Tekan rincian atau nominal jumlah di tabel untuk mengubah, lalu simpan.
+      ✏️ Klik rincian atau jumlah untuk mengedit.
     </div>
 
     <!-- KOTAK 2 (BARU): TABEL RINCIAN + SIMPAN -->
@@ -543,9 +545,9 @@
       const hasEdits = hasAnyChanges();
       btnSaveEdits.disabled = !hasEdits;
       if (hasEdits) {
-        editHint.textContent = 'Ada revisi yang belum disimpan. Tekan "Simpan" untuk mengupdate data.';
+        editHint.textContent = '✏️ Ada revisi yang belum disimpan. Tekan "Simpan" untuk mengupdate data.';
       } else {
-        editHint.textContent = 'Tekan rincian atau nominal jumlah di tabel untuk merevisi, lalu simpan.';
+        editHint.textContent = '✏️ Klik rincian atau jumlah untuk mengedit.';
       }
     }
 
