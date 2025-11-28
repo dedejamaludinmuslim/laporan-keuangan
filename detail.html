@@ -190,6 +190,14 @@
       white-space: nowrap;
     }
 
+    /* Izinkan kolom Rincian membungkus teks panjang */
+    th:nth-child(3),
+    td:nth-child(3) {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+
     th:nth-child(1),
     td:nth-child(1) {
       text-align: center;
@@ -364,6 +372,43 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+    @media (max-width: 640px) {
+    .card-block {
+      padding: 10px 8px;
+    }
+  
+    .table-wrapper {
+      margin-top: 2px;
+    }
+  
+    /* sel tabel sedikit lebih rapat, tapi font tetap sama */
+    th, td {
+      padding: 6px 6px;
+    }
+  
+    /* kolom No lebih sempit */
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 32px;
+    }
+  
+    /* kolom Tanggal dibatasi */
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 80px;
+    }
+  
+    /* kolom jumlah / sisa tidak terlalu lebar */
+    th:nth-child(4),
+    td:nth-child(4),
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(6),
+    td:nth-child(6) {
+      min-width: 90px;
+    }
+  }
+
   </style>
 </head>
 <body>
