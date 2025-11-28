@@ -271,6 +271,14 @@
       margin-top: 4px;
     }
 
+    .table-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+
+
     .chart-title {
       font-size: 0.85rem;
       font-weight: 600;
@@ -391,8 +399,13 @@
       </div>
     </div>
 
-    <!-- KOTAK 2 (BARU): TABEL RINCIAN + SIMPAN -->
+    <!-- KOTAK 2: TABEL RINCIAN + SIMPAN -->
     <div class="card-block">
+      <!-- judul tabel baru -->
+      <div class="table-title" id="tableTitle">
+        Rincian Pemasukan/Pengeluaran
+      </div>
+    
       <div class="table-wrapper">
         <table id="detailTable">
           <thead>
@@ -414,12 +427,12 @@
           Tidak ada transaksi pada bulan ini.
         </div>
       </div>
-      
-      <!-- hint sekarang jadi “footer” tabel, nempel di bawah -->
+    
+      <!-- hint footer tabel -->
       <div class="edit-hint" id="editHint">
         ✏️ Klik rincian atau jumlah untuk mengedit.
       </div>
-
+    
       <div class="edit-actions">
         <button type="button" class="btn-save-edit" id="btnSaveEdits" disabled>
           Simpan
@@ -427,7 +440,6 @@
         </button>
       </div>
     </div>
-  </div>
 
   <div id="toast" class="toast"></div>
 
@@ -453,6 +465,7 @@
     const theadRow       = document.getElementById("theadRow");
     const btnSaveEdits   = document.getElementById("btnSaveEdits");
     const editHint       = document.getElementById("editHint");
+    const tableTitleEl   = document.getElementById("tableTitle");
 
     // chart elements
     const chartCardEl     = document.getElementById("chartCard");
@@ -700,40 +713,51 @@
         chartCardEl.style.display = "none";
         return;
       }
-
+    
       chartCardEl.style.display = "block";
       chartBarListEl.innerHTML = "";
       chartEmptyEl.style.display = "none";
-      chartSubtitleEl.textContent = "";
-
-      if (!rows || !rows.length) {
-        chartEmptyEl.style.display = "block";
-        return;
-      }
-
+    
       let baseJenis = null;
       if (tipe === "pemasukan") baseJenis = "pemasukan";
       else if (tipe === "pengeluaran") baseJenis = "pengeluaran";
-
+    
+      // judul baru yang lebih soft
+      if (baseJenis === "pemasukan") {
+        chartTitleEl.textContent = "Sorotan Pemasukan Bulan Ini";
+      } else if (baseJenis === "pengeluaran") {
+        chartTitleEl.textContent = "Sorotan Pengeluaran Bulan Ini";
+      } else {
+        chartTitleEl.textContent = "Sorotan Transaksi Bulan Ini";
+      }
+    
+      chartSubtitleEl.textContent = "";
+    
+      if (!rows || !rows.length) {
+        chartEmptyEl.style.display = "block";
+        chartSubtitleEl.textContent = "Belum ada data untuk ditampilkan pada bulan ini.";
+        return;
+      }
+    
       let filteredRows = rows;
       if (baseJenis) {
         filteredRows = rows.filter(r => r.jenis === baseJenis);
       }
-
+    
       if (!filteredRows.length) {
         chartEmptyEl.style.display = "block";
         chartSubtitleEl.textContent = "Belum ada data yang sesuai untuk dihitung.";
         return;
       }
-
+    
       const mapStats = new Map();
       let grandTotal = 0;
-
+    
       filteredRows.forEach(t => {
         const rincian = (t.rincian || "Tanpa rincian").trim() || "Tanpa rincian";
         const jumlah = Number(t.jumlah || 0);
         grandTotal += jumlah;
-
+    
         if (!mapStats.has(rincian)) {
           mapStats.set(rincian, { count: 0, total: 0 });
         }
@@ -741,36 +765,34 @@
         obj.count += 1;
         obj.total += jumlah;
       });
-
+    
       if (!grandTotal) {
         chartEmptyEl.style.display = "block";
         chartSubtitleEl.textContent = "Total nominal masih 0, belum bisa ditampilkan sebagai diagram.";
         return;
       }
-
+    
       const arr = Array.from(mapStats.entries()).map(([rincian, v]) => ({
         rincian,
         count: v.count,
         total: v.total
       }));
-
+    
       arr.sort((a, b) => b.total - a.total || b.count - a.count);
-
+    
       const top = arr.slice(0, 8);
       const maxTotal = Math.max(...top.map(x => x.total));
-
+    
       const jenisLabel = baseJenis === "pemasukan" ? "pemasukan" : "pengeluaran";
-      const titleLabel = baseJenis === "pemasukan" ? "Pemasukan Terbanyak" : "Pengeluaran Terbanyak";
-
-      chartTitleEl.textContent = titleLabel;
+    
       chartSubtitleEl.textContent =
         `Rincian dengan total ${jenisLabel} terbesar pada bulan ini.`;
-
+    
       top.forEach(item => {
         const percent = (item.total / grandTotal) * 100;
         const percentDisplay = Math.round(percent);
         const widthPercent = maxTotal ? (item.total / maxTotal) * 100 : 0;
-
+    
         const row = document.createElement("div");
         row.className = "chart-bar-row";
         row.innerHTML = `
@@ -798,13 +820,17 @@
       pendingEdits.clear();
       updateEditHint();
 
-      pageTitleEl.textContent    = tipeLabel(role, tipe);
-      pageSubtitleEl.textContent = tipeSubtitle(tipe);
-      tagRoleEl.textContent      = `Pelapor: ${role}`;
-      infoBulanEl.innerHTML      = `
-        <span><strong>Bulan:</strong> ${monthLabel(bulanKey)}</span>
-        <span><strong>Kode:</strong> ${bulanKey}</span>
-      `;
+      let tableTitleText = "Rincian Transaksi";
+
+      if (tipe === "pemasukan") {
+        tableTitleText = `Rincian Pemasukan ${role}`;
+      } else if (tipe === "pengeluaran") {
+        tableTitleText = `Rincian Pengeluaran ${role}`;
+      } else if (tipe === "sisa") {
+        tableTitleText = `Rincian Pemasukan & Pengeluaran ${role}`;
+      }
+      
+      tableTitleEl.textContent = tableTitleText;
 
       if (tipe === "sisa") {
         theadRow.innerHTML = `
