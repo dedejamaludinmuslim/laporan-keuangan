@@ -392,10 +392,37 @@
     }
 
     .rekap-title {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
-      margin: 4px 2px 6px;
+      margin: 6px 2px 8px;
       color: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .rekap-title-label {
+      letter-spacing: 0.03em;
+    }
+    
+    .rekap-title-pill {
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    /* warna beda untuk Abi & Umi */
+    .rekap-title-abi .rekap-title-pill {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    
+    .rekap-title-umi .rekap-title-pill {
+      background: var(--purple-soft);
+      color: var(--purple);
     }
 
     .rekap-grid-2 {
@@ -597,13 +624,19 @@
 
         <!-- REKAP ABI -->
         <div class="rekap-section">
-          <div class="rekap-title" style="padding-top: 11px; padding-bottom: 9px;"><center>Rekap Laporan Abi</center></div>
+          <div class="rekap-title rekap-title-abi">
+            <span class="rekap-title-label">Rekap Laporan</span>
+            <span class="rekap-title-pill">Abi</span>
+          </div>
           <div class="rekap-grid-2" id="rekap-abi-grid"></div>
         </div>
 
         <!-- REKAP UMI -->
         <div class="rekap-section">
-          <div class="rekap-title" style="padding-top: 11px; padding-bottom: 9px;"><center>Rekap Laporan Umi</center></div>
+          <div class="rekap-title rekap-title-umi">
+            <span class="rekap-title-label">Rekap Laporan</span>
+            <span class="rekap-title-pill">Umi</span>
+          </div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
         </div>
       </div>
