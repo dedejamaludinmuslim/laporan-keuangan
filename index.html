@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Aplikasi Laporan Keuangan Rumah Tangga</title>
-  <meta name="description" content="Abi & Umi Finance - aplikasi ringan untuk mencatat dan memonitor pemasukan & pengeluaran rumah tangga per bulan.">
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#1d4ed8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -77,7 +76,6 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: #ffffff;
-      letter-spacing: 0.05em;
     }
 
     .title-group p {
@@ -86,6 +84,7 @@
       margin-top: 4px;
     }
 
+    /* disamakan dengan detail.html */
     .badge-row {
       display: flex;
       justify-content: space-between;
@@ -117,7 +116,7 @@
     .tab {
       flex: 1;
       text-align: center;
-      padding: 9px 12px;
+      padding: 9px 12px; /* sama seperti tombol "Terapkan" */
       border-radius: 999px;
       border: none;
       background: transparent;
@@ -169,12 +168,6 @@
       background: linear-gradient(135deg, var(--purple), var(--blue));
     }
 
-    .section-caption {
-      font-size: 0.74rem;
-      color: var(--gray);
-      margin-bottom: 8px;
-    }
-
     .form-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -201,11 +194,6 @@
       font-size: 0.78rem;
       font-weight: 600;
       color: var(--gray);
-    }
-
-    .field-label {
-      padding-top: 11px;
-      padding-bottom: 9px;
     }
 
     input[type="text"],
@@ -372,6 +360,21 @@
       color: var(--gray);
     }
 
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--gray);
+    }
+
     .month-row {
       display: flex;
       gap: 6px;
@@ -382,32 +385,6 @@
 
     .month-row > * {
       flex: 1 1 0;
-    }
-
-    .month-input {
-      border-radius: 999px;
-      border: 1px solid rgba(37, 99, 235, 0.4);
-      padding: 9px 12px;
-      font-size: 0.8rem;
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--dark);
-      outline: none;
-      width: 100%;
-      text-align: center;
-      transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
-    }
-
-    .month-input:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
-      background: #ffffff;
-    }
-
-    #btnRefreshRekap {
-      width: 100%;
-      padding: 9px 12px;
-      font-size: 0.8rem;
-      text-align: center;
     }
 
     .rekap-section {
@@ -424,11 +401,11 @@
       justify-content: center;
       gap: 8px;
     }
-
+    
     .rekap-title-label {
       letter-spacing: 0.03em;
     }
-
+    
     .rekap-title-pill {
       padding: 2px 9px;
       border-radius: 999px;
@@ -436,44 +413,22 @@
       font-weight: 600;
       white-space: nowrap;
     }
-
+    
+    /* warna beda untuk Abi & Umi */
     .rekap-title-abi .rekap-title-pill {
       background: var(--blue-soft);
       color: var(--blue);
     }
-
+    
     .rekap-title-umi .rekap-title-pill {
       background: var(--purple-soft);
       color: var(--purple);
-    }
-
-    .rekap-title-all .rekap-title-pill {
-      background: var(--gray-soft);
-      color: var(--dark);
     }
 
     .rekap-grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-    }
-
-    .rekap-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    @media (max-width: 520px) {
-      .rekap-grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 420px) {
-      .rekap-grid-3 {
-        grid-template-columns: 1fr;
-      }
     }
 
     .rekap-card {
@@ -514,22 +469,35 @@
       color: var(--dark);
     }
 
-    .rekap-value-main {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--blue);
-    }
-
     .rekap-sub {
       font-size: 0.7rem;
       color: var(--gray);
       margin-top: 2px;
     }
 
-    .rekap-footnote {
-      margin-top: 8px;
-      font-size: 0.72rem;
-      color: var(--gray);
+    .month-input {
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--dark);
+      outline: none;
+      width: 100%;
+      text-align: center;
+      transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
+    }
+
+    .month-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: #ffffff;
+    }
+
+    #btnRefreshRekap {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 0.8rem;
       text-align: center;
     }
 
@@ -559,24 +527,26 @@
   </style>
 </head>
 <body>
-  <div class="app" role="main">
+  <div class="app">
     <div class="app-header">
       <div class="title-group">
         <h1>LAPORAN KEUANGAN RUMAH TANGGA</h1>
-        <p>Monitoring pemasukan & pengeluaran bulanan dalam satu aplikasi ringan.</p>
+        <p>Monitoring Pemasukan & Pengeluaran Bulanan dalam satu Aplikasi.</p>
       </div>
 
+      <!-- baris badge + tombol install, sejajar seperti di detail.html -->
       <div class="badge-row">
         <span class="badge-brand">Abi &amp; Umi Finance</span>
-        <button id="btnInstall" class="btn-ghost btn-mixed" style="display: none;">
+        <button id="btnInstall" class="btn-ghost btn-mixed"
+                style="display: none;">
           Install aplikasi
         </button>
       </div>
     </div>
 
-    <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="input" role="tab" aria-selected="true">Input Laporan</button>
-      <button class="tab" data-tab="rekap" role="tab" aria-selected="false">Rekap Bulanan</button>
+    <div class="tabs">
+      <button class="tab active" data-tab="input">Input Laporan</button>
+      <button class="tab" data-tab="rekap">Rekap Bulanan</button>
     </div>
 
     <div class="content">
@@ -586,19 +556,16 @@
           <span class="dot"></span>
           <span>Input Laporan Keuangan</span>
         </div>
-        <p class="section-caption">
-          Lengkapi tanggal, pelapor, jenis laporan, rincian, dan jumlah.
-        </p>
         
         <form id="form-laporan">
           <div class="form-grid">
             <div class="form-group">
-              <label class="field-label" for="tanggal">Mau laporan yang kapan?</label>
+              <label style="padding-top: 11px; padding-bottom: 9px;" for="tanggal">Mau laporan yang kapan?</label>
               <input type="date" id="tanggal" required />
             </div>
 
             <div class="form-group">
-              <label class="field-label">Siapa yang laporan?</label>
+              <label style="padding-top: 11px; padding-bottom: 9px;">Siapa yang laporan?</label>
               <div class="toggle-group" id="pelaporToggle">
                 <button type="button" class="toggle-btn" data-value="Abi">Abi</button>
                 <button type="button" class="toggle-btn" data-value="Umi">Umi</button>
@@ -607,7 +574,7 @@
             </div>
 
             <div class="form-group">
-              <label class="field-label">Jenis laporan apa?</label>
+              <label style="padding-top: 11px; padding-bottom: 9px;">Jenis laporan apa?</label>
               <div class="toggle-group" id="jenisToggle">
                 <button type="button" class="toggle-btn" data-value="pemasukan">Pemasukan</button>
                 <button type="button" class="toggle-btn" data-value="pengeluaran">Pengeluaran</button>
@@ -616,32 +583,19 @@
             </div>
 
             <div class="form-group">
-              <label class="field-label" for="rincian">Ketik rincian laporan di bawah ya...</label>
-              <input
-                type="text"
-                id="rincian"
-                list="rincianList"
-                placeholder="misal: Gaji, Belanja bulanan, Infak, dll."
-                style="font-style: italic;"
-                required
-              />
+              <label style="padding-top: 11px; padding-bottom: 9px;" for="rincian">Ketik rincian laporan di bawah ya...</label>
+              <input type="text" id="rincian" list="rincianList"
+                     placeholder="misal: Gaji, Belanja bulanan, Infak, dll." style="font-style: italic;" required />
               <datalist id="rincianList"></datalist>
             </div>
 
             <div class="form-group">
-              <label class="field-label" for="jumlah">Jumlah (Rp):</label>
-              <input
-                type="number"
-                id="jumlah"
-                min="0"
-                step="1000"
-                placeholder="misal: 500000"
-                style="font-style: italic;"
-                required
-              />
+              <label style="padding-top: 11px; padding-bottom: 9px;" for="jumlah">Jumlah (Rp):</label>
+              <input type="number" id="jumlah" min="0" step="1000" placeholder="misal: 500000" style="font-style: italic;" required />
             </div>
           </div>
 
+          <!-- TOMBOL SIMPAN, DI TENGAH -->
           <div class="form-group full" style="margin-top: 10px; text-align: center;">
             <button type="submit" class="btn-primary btn-mixed">
               Simpan
@@ -661,20 +615,11 @@
         </div>
 
         <div class="top-summarizer">
-          <label class="field-label">Mau lihat rekap bulan apa?</label>
+          <label style="padding-top: 11px; padding-bottom: 9px;">Mau lihat rekap bulan apa?</label>
           <div class="month-row">
             <input type="month" id="bulanRekap" class="month-input" />
             <button class="btn-ghost btn-mixed" id="btnRefreshRekap">Terapkan</button>
           </div>
-        </div>
-
-        <!-- REKAP ALL -->
-        <div class="rekap-section">
-          <div class="rekap-title rekap-title-all">
-            <span class="rekap-title-label">Rekap Gabungan</span>
-            <span class="rekap-title-pill">Abi &amp; Umi</span>
-          </div>
-          <div class="rekap-grid-3" id="rekap-summary-grid"></div>
         </div>
 
         <!-- REKAP ABI -->
@@ -694,10 +639,6 @@
           </div>
           <div class="rekap-grid-2" id="rekap-umi-grid"></div>
         </div>
-
-        <p class="rekap-footnote">
-          Ketuk salah satu kotak rekap untuk melihat rincian transaksi bulan tersebut.
-        </p>
       </div>
     </div>
   </div>
@@ -749,7 +690,6 @@
       if (error) {
         console.error('Gagal load transaksi:', error);
         transaksi = [];
-        showToast('Gagal memuat transaksi. Cek koneksi internet.');
         return;
       }
 
@@ -763,7 +703,6 @@
       tabs.forEach(t => {
         const isActive = t.dataset.tab === name;
         t.classList.toggle("active", isActive);
-        t.setAttribute("aria-selected", isActive ? "true" : "false");
       });
       panels.forEach(p => {
         p.style.display = (p.id === `tab-${name}`) ? "block" : "none";
@@ -905,7 +844,6 @@
     const bulanRekapEl = document.getElementById("bulanRekap");
     const abiGrid = document.getElementById("rekap-abi-grid");
     const umiGrid = document.getElementById("rekap-umi-grid");
-    const summaryGrid = document.getElementById("rekap-summary-grid");
     const btnRefresh = document.getElementById("btnRefreshRekap");
 
     (function setDefaultMonth() {
@@ -922,7 +860,6 @@
 
       if (error) {
         console.error('Gagal ambil rekap:', error);
-        showToast('Gagal memuat rekap bulan ini.');
         return {
           pemasukanAbi: 0,
           pengeluaranAbi: 0,
@@ -968,28 +905,6 @@
 
       const r = await hitungRekap(bulanKey);
 
-      // Rekap gabungan Abi + Umi
-      if (summaryGrid) {
-        summaryGrid.innerHTML = `
-          <div class="rekap-card">
-            <h3>Total Pemasukan</h3>
-            <div class="rekap-value-main">${formatRupiah(r.pemasukanAll)}</div>
-            <div class="rekap-sub">Abi + Umi</div>
-          </div>
-          <div class="rekap-card">
-            <h3>Total Pengeluaran</h3>
-            <div class="rekap-value-main">${formatRupiah(r.pengeluaranAll)}</div>
-            <div class="rekap-sub">Abi + Umi</div>
-          </div>
-          <div class="rekap-card">
-            <h3>Sisa Bulan Ini</h3>
-            <div class="rekap-value-main">${formatRupiah(r.sisaAll)}</div>
-            <div class="rekap-sub">Selisih pemasukan & pengeluaran</div>
-          </div>
-        `;
-      }
-
-      // Rekap Abi
       abiGrid.innerHTML = `
         <div class="rekap-card rekap-click" data-role="Abi" data-tipe="pemasukan">
           <h3>Pemasukan:</h3>
@@ -1005,7 +920,6 @@
         </div>
       `;
 
-      // Rekap Umi
       umiGrid.innerHTML = `
         <div class="rekap-card rekap-click" data-role="Umi" data-tipe="pemasukan">
           <h3>Pemasukan:</h3>
