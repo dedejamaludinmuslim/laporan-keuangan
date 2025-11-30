@@ -1048,27 +1048,57 @@
       btnSaveEdits.disabled = true;
       editHint.textContent = "Menyimpan revisi ke server...";
 
+      let hadError = false;
+
       for (const [id, rec] of pendingEdits.entries()) {
-        const updateObj = {};
-        if (rec.jumlah !== null)  updateObj.jumlah  = rec.jumlah;
-        if (rec.rincian !== null) updateObj.rincian = rec.rincian;
+        try {
+          // JIKA NOMINAL HASIL EDIT = 0 → HAPUS BARIS
+          if (rec.jumlah === 0) {
+            const { error } = await supabase
+              .from('transaksi_keuangan')
+              .delete()
+              .eq('id', id);
 
-        if (Object.keys(updateObj).length === 0) continue;
+            if (error) {
+              console.error("Gagal menghapus id", id, error);
+              hadError = true;
+            }
+            // lanjut ke id berikutnya, tidak perlu update
+            continue;
+          }
 
-        const { error } = await supabase
-          .from('transaksi_keuangan')
-          .update(updateObj)
-          .eq('id', id);
+          // Selain itu, tetap update seperti biasa
+          const updateObj = {};
+          if (rec.jumlah !== null)  updateObj.jumlah  = rec.jumlah;
+          if (rec.rincian !== null) updateObj.rincian = rec.rincian;
 
-        if (error) {
-          console.error("Gagal update id", id, error);
-          showToast("Sebagian revisi gagal disimpan. Cek console.");
+          if (Object.keys(updateObj).length === 0) continue;
+
+          const { error } = await supabase
+            .from('transaksi_keuangan')
+            .update(updateObj)
+            .eq('id', id);
+
+          if (error) {
+            console.error("Gagal update id", id, error);
+            hadError = true;
+          }
+        } catch (err) {
+          console.error("Error saat menyimpan revisi:", err);
+          hadError = true;
         }
       }
 
       pendingEdits.clear();
       await loadDetail();
-      showToast("Revisi berhasil disimpan.");
+
+      if (hadError) {
+        showToast("Sebagian revisi gagal disimpan. Cek console.");
+      } else {
+        showToast("Revisi disimpan. Nominal 0 dihapus otomatis.");
+      }
+
+      updateEditHint();
     });
 
     loadDetail();
